@@ -12,6 +12,12 @@ Here is another example of the tool visualising an optimal solution to a medieva
 
 https://user-images.githubusercontent.com/11925062/128023855-e89dccc0-9ccd-4f99-b55e-3db56545a011.mp4
 
+
+
+https://user-images.githubusercontent.com/11925062/128043232-31578942-9951-4d31-be5d-6f2af42012d2.mp4
+
+
+
 By restricting the set of legal (applicable) moves, we can apply the same BFS client to find optimal solutions to levels in the classic puzzle game Sokoban. In Sokoban, only straight pushes are allowed, and no pulls. Here is a visualisation of the solution found to the last level of the Sokogen variant of Sokoban, [Sokogen level 78](https://www.sokobanonline.com/play/web-archive/jacques-duthen/sokogen-990602-levels/87496_sokogen-990602-levels-78):
 
 
