@@ -12,7 +12,7 @@ Multi-agent clients are typically based on advanced multi-agent architectures in
 
 https://user-images.githubusercontent.com/11925062/128036105-fbf5d0a0-2cbc-4b19-ae31-a9313b218f1f.mp4
 
-A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflict between the agents, and produces a faster solution (lower action cost). 
+A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflicts between the agents, and produces a faster solution (lower action cost). 
 
 https://user-images.githubusercontent.com/11925062/128043884-608c2020-95ec-41f4-8088-170c6cf1c4df.mp4
 
