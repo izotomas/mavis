@@ -6,7 +6,7 @@ The original domain developed for MAvis is called the **hospital domain**. It is
 
 https://user-images.githubusercontent.com/11925062/127993622-61a5fb10-ac0f-4a3a-9de8-e314a96c2b67.mov
 
-Both client and level are made by students attending the course 02285 Artificial Intelligence and Multi-Agent Systems at Technical University of Denmark (DTU). The MAvis tool was originally developed to be used as a teaching tool in that particular course, and the original version only supported that single domain. A detailed description of the hospital domain is available in [docs/domains/hospital/hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf)
+Both client and level are made by students attending the course 02285 Artificial Intelligence and Multi-Agent Systems at Technical University of Denmark (DTU). The MAvis tool was originally developed to be used as a teaching tool in that particular course, and the original version only supported that single domain. A detailed description of the hospital domain is available in [docs/domains/hospital/hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf).
 
 @@other examples
 
