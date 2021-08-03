@@ -8,28 +8,11 @@ https://user-images.githubusercontent.com/11925062/127993622-61a5fb10-ac0f-4a3a-
 
 Both client and level are made by students attending the course _02285 Artificial Intelligence and Multi-Agent Systems_ at the Technical University of Denmark (DTU). The MAvis tool was originally developed to be used as a teaching tool in that particular course, and the original version only supported that single domain. A detailed description of the hospital domain is available in [docs/domains/hospital/hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf).
 
-Here is another example of the tool visualising an optimal solution to a medieval French labyrinth, _Labyrinth of St. Bertin_, computed by a simple Breadth-First Search (BFS) client (the solution consists of 1110 actions (moves) and was computed in 555ms as can be seen from the top bar of the server visualisation):
-
-https://user-images.githubusercontent.com/11925062/128023855-e89dccc0-9ccd-4f99-b55e-3db56545a011.mp4
-
-
-
-https://user-images.githubusercontent.com/11925062/128043232-31578942-9951-4d31-be5d-6f2af42012d2.mp4
-
-
-
-By restricting the set of legal (applicable) moves, we can apply the same BFS client to find optimal solutions to levels in the classic puzzle game Sokoban. In Sokoban, only straight pushes are allowed, and no pulls. Here is a visualisation of the solution found to the last level of the Sokogen variant of Sokoban, [Sokogen level 78](https://www.sokobanonline.com/play/web-archive/jacques-duthen/sokogen-990602-levels/87496_sokogen-990602-levels-78):
-
-
+Multi-agent clients are typically based on advanced multi-agent architectures involving communication, task sharing, etc. Simpler levels can also be solved with simpler algorithms like a basic Breadth-First Search (BFS) algorithm. A client based on BFS is guaranteed to only find optimal solutions, but will generally not scale to levels with many agents and boxes. By restricting the set of legal (applicable) moves, we can apply a simple BFS client to find optimal solutions in the classic Sokoban puzzle game. In Sokoban, only straight pushes are allowed, and no pulls. Here is a visualisation of the solution found by BFS to the last level of the Sokogen variant of Sokoban, [Sokogen level 78](https://www.sokobanonline.com/play/web-archive/jacques-duthen/sokogen-990602-levels/87496_sokogen-990602-levels-78):
 
 https://user-images.githubusercontent.com/11925062/128036105-fbf5d0a0-2cbc-4b19-ae31-a9313b218f1f.mp4
 
-
-
 A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflict between the agents, and produces a faster solution (lower action cost). 
-
-
-
 
 https://user-images.githubusercontent.com/11925062/128043884-608c2020-95ec-41f4-8088-170c6cf1c4df.mp4
 
