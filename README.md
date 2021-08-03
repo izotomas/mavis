@@ -1,7 +1,3 @@
-
-
-https://user-images.githubusercontent.com/11925062/128046811-f678c8ad-9b42-4e96-85da-ad51202a465d.mp4
-
 # mavis-private
 
 MAvis is short for "Multi-Agent Visualisation Tool". It is a tool to support the design, implementation and test of single- and multi-agent planning algorithms. Various discrete single-and multi-agent domains can be modelled and visualised with the tool. The instances of a given domain are called **levels**, and these are typically what is referred to as **planning problems** or **planning tasks** within the area of automated planning (a given goal has to be reached from a given initial state through a sequence of actions). The tool doesn't provide any planning system for solving levels, it only provides the models of the different domains and a graphical user interface to visualise levels and animate solutions. The system for visualising levels and solutions is called the (**MAvis**) **server**. Users of the tool (e.g. students or researchers in AI) then have to provide their own AI system (planning system) for solving levels. That AI system is called a **client**. 
