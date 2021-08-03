@@ -858,7 +858,7 @@ public final class HospitalDomain
             this.agentOutlineColor[agent] = this.stateSequence.agentColors[agent].darker().darker();
         }
 
-        baseFont = Fonts.getDroidSansMono();
+        baseFont = Fonts.getDejaVuSansMono();
         // We should always be able to load our font, but if something somehow fails, fall back on some default font.
         if (baseFont == null)
         {

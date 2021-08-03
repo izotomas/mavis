@@ -28,6 +28,33 @@ public class Fonts
     private static final String droidSansMonoResourcePath = "/fonts/droid/DroidSansMonoSlashed.ttf";
     private static Font droidSansMono = null;
 
+    private static final String dejaVuSansMonoResourcePath = "/fonts/dejavu/DejaVuSansMono-Bold.ttf";
+    private static Font dejaVuSansMono = null;
+
+    /**
+     * Returns a global instance of the DejaVu Sans Mono (Bold) font, loaded on the first call.
+     * Returns null and writes an error to Server.printError if the font can't be loaded.
+     */
+    public synchronized static Font getDejaVuSansMono()
+    {
+        if (dejaVuSansMono == null)
+        {
+            try
+            {
+                var fontLoadStart = System.nanoTime();
+                dejaVuSansMono = loadFontResource(dejaVuSansMonoResourcePath, Font.TRUETYPE_FONT);
+                var fontLoadElapsed = System.nanoTime() - fontLoadStart;
+                Server.printDebug("Loaded DejaVu Sans Mono font in: " + fontLoadElapsed / 1_000_000L + " ms.");
+            }
+            catch (FontFormatException | IOException e)
+            {
+                Server.printError("Could not load DejaVu Sans Mono font:");
+                Server.printError(e.getMessage());
+            }
+        }
+        return dejaVuSansMono;
+    }
+
     /**
      * Returns a global instance of the Droid Sans Mono font, loaded on the first call.
      * Returns null and writes an error to Server.printError if the font can't be loaded.
