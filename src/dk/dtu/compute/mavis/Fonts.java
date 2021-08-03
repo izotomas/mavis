@@ -25,9 +25,6 @@ import java.io.InputStream;
 
 public class Fonts
 {
-    private static final String droidSansMonoResourcePath = "/fonts/droid/DroidSansMonoSlashed.ttf";
-    private static Font droidSansMono = null;
-
     private static final String dejaVuSansMonoResourcePath = "/fonts/dejavu/DejaVuSansMono-Bold.ttf";
     private static Font dejaVuSansMono = null;
 
@@ -53,32 +50,6 @@ public class Fonts
             }
         }
         return dejaVuSansMono;
-    }
-
-    /**
-     * Returns a global instance of the Droid Sans Mono font, loaded on the first call.
-     * Returns null and writes an error to Server.printError if the font can't be loaded.
-     *
-     * The used font is a derivation with a slashed zero; from cosmix.org.
-     */
-    public synchronized static Font getDroidSansMono()
-    {
-        if (droidSansMono == null)
-        {
-            try
-            {
-                var fontLoadStart = System.nanoTime();
-                droidSansMono = loadFontResource(droidSansMonoResourcePath, Font.TRUETYPE_FONT);
-                var fontLoadElapsed = System.nanoTime() - fontLoadStart;
-                Server.printDebug("Loaded Droid Sans Mono font in: " + fontLoadElapsed / 1_000_000L + " ms.");
-            }
-            catch (FontFormatException | IOException e)
-            {
-                Server.printError("Could not load Droid Sans Mono font:");
-                Server.printError(e.getMessage());
-            }
-        }
-        return droidSansMono;
     }
 
     private static Font loadFontResource(String fontPath, int fontFormat)
