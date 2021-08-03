@@ -47,18 +47,18 @@ public class TestClient
             "Push(W,S)",
             "Push(W,W)",
 
-            "Pull(N,S)",
+            "Pull(N,N)",
             "Pull(N,E)",
             "Pull(N,W)",
-            "Pull(S,N)",
+            "Pull(S,S)",
             "Pull(S,E)",
             "Pull(S,W)",
             "Pull(E,N)",
             "Pull(E,S)",
-            "Pull(E,W)",
+            "Pull(E,E)",
             "Pull(W,N)",
             "Pull(W,S)",
-            "Pull(W,E)"
+            "Pull(W,W)"
     };
 
     public static void main(String[] args)
@@ -119,17 +119,6 @@ public class TestClient
         long numMessages = 0;
         final int batchSize = 50;
 
-        for (int i = 0; i < batchSize; ++i)
-        {
-            ++numMessages;
-            for (int agent = 0; agent < numAgents; ++agent)
-            {
-                jointAction[agent] = ACTIONS[random.nextInt(ACTIONS.length)];
-            }
-            System.out.println(String.join(";", jointAction));
-            System.out.flush();
-        }
-
         messageLoop:
         while (true)
         {
@@ -137,13 +126,13 @@ public class TestClient
             {
                 if (++numMessages > 20000)
                 {
-                    return;
+                    break messageLoop;
                 }
                 for (int agent = 0; agent < numAgents; ++agent)
                 {
                     jointAction[agent] = ACTIONS[random.nextInt(ACTIONS.length)];
                 }
-                System.out.println(String.join(";", jointAction));
+                System.out.println(String.join("|", jointAction));
                 System.out.flush();
             }
 
