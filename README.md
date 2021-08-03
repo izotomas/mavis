@@ -1,3 +1,7 @@
+
+
+https://user-images.githubusercontent.com/11925062/128046811-f678c8ad-9b42-4e96-85da-ad51202a465d.mp4
+
 # mavis-private
 
 MAvis is short for "Multi-Agent Visualisation Tool". It is a tool to support the design, implementation and test of single- and multi-agent planning algorithms. Various discrete single-and multi-agent domains can be modelled and visualised with the tool. The instances of a given domain are called **levels**, and these are typically what is referred to as **planning problems** or **planning tasks** within the area of automated planning (a given goal has to be reached from a given initial state through a sequence of actions). The tool doesn't provide any planning system for solving levels, it only provides the models of the different domains and a graphical user interface to visualise levels and animate solutions. The system for visualising levels and solutions is called the (**MAvis**) **server**. Users of the tool (e.g. students or researchers in AI) then have to provide their own AI system (planning system) for solving levels. That AI system is called a **client**. 
@@ -10,7 +14,7 @@ Both client and level are made by students attending the course _02285 Artificia
 
 Multi-agent clients are typically based on advanced multi-agent architectures involving communication, task sharing, etc. Simpler levels can also be solved with simpler algorithms like a basic Breadth-First Search (BFS) algorithm. A client based on BFS is guaranteed to only find optimal solutions, but will generally not scale to levels with many agents and boxes. By restricting the set of legal (applicable) moves, we can apply a simple BFS client to find optimal solutions in the classic Sokoban puzzle game. In Sokoban, only straight pushes are allowed, and no pulls. Here is a visualisation of the solution found by a BFS client to the last level of the Sokogen variant of Sokoban, [Sokogen level 78](https://www.sokobanonline.com/play/web-archive/jacques-duthen/sokogen-990602-levels/87496_sokogen-990602-levels-78):
 
-https://user-images.githubusercontent.com/11925062/128036105-fbf5d0a0-2cbc-4b19-ae31-a9313b218f1f.mp4
+https://user-images.githubusercontent.com/11925062/128046889-5bd59281-97bd-4776-a7a8-4d8a3c964512.mp4
 
 A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflicts between the agents, and produces a faster solution (lower action cost). 
 
