@@ -12,7 +12,7 @@ Multi-agent clients for the hospital domain are typically based on advanced mult
 
 https://user-images.githubusercontent.com/11925062/128046889-5bd59281-97bd-4776-a7a8-4d8a3c964512.mp4
 
-A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflicts between the agents, and produces a faster solution (fewer joint moves). Both clients were contestants in the competition of the 2021 iteration of the course _02285 Artificial Intelligence and Multi-Agent Systems_. 
+A final example is the multi-agent level below with a lot of potential for conflicts between the 4 agents, as seen in the solution of the client to the left. The client on the right on the other hand elegantly solves the conflicts between the agents, and produces a faster solution (fewer joint moves). Both clients were contestants in the competition of the 2021 iteration of the course _02285 Artificial Intelligence and Multi-Agent Systems_. Note that neither of the clients has managed to find an optimal goal prioritisation (decision on which boxes to put on which goal cells in which order). 
 
 https://user-images.githubusercontent.com/11925062/128043884-608c2020-95ec-41f4-8088-170c6cf1c4df.mp4
 
