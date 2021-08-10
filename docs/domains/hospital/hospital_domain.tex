@@ -22,7 +22,7 @@
         \end{minipage}
     }
 }
-
+%\end{verbatim}%TexMaker is syntax-hightlight-confused by the \verbatiminput command above. The \end{verbatim} unconfuses it from here on (even though it's commented out).
 
 \title{\mavis\ Domain Description: The Hospital Domain}
 
@@ -87,7 +87,7 @@ The hospital domain of \mavis\ supports a simplified simulation of transportatio
   \end{center}
   \caption{Example level as visualised in the \mavis\ visualisation environment. }\label{figu:aioli}
 \end{figure}
-The hospital domain instances are grid-based structures called \emph{levels}. Figure~\ref{figu:aioli} illustrates an example of a level. A level in the hospital domain contains \emph{walls}, \emph{boxes}, \emph{goal cells}, and \emph{agents}. The \emph{walls} are used to represent the physical layout of the environment, visualised as black squares. The \emph{agents} represents the robots, visualised as numbered colored circles. The \emph{boxes} represent the items that the robots have to move, visualised as lettered squares of the same colors as the agents. The \emph{goal cells} represent destinations, visualised as yellow squares and circles. To \emph{solve} a level, each goal cell must have an object of the correct type on top of it: each yellow square must have a box of the same letter on top of it, and each yellow circle must have the agent with the correct number on top of it. In the level of Figure~\ref{figu:aioli}, only the boxes have destinations.  Agents can only move boxes that have the same color as themselves.  
+Levels of the hospital domain are grid-based environments. Figure~\ref{figu:aioli} shows the visualisation of an example level. A level in the hospital domain contains \emph{walls}, \emph{boxes}, \emph{goal cells}, and \emph{agents}. The \emph{walls} are used to represent the physical layout of the environment, visualised as black squares. The \emph{agents} represent the robots, visualised as numbered colored circles. The \emph{boxes} represent the items that the robots have to move, visualised as lettered colored squares. The \emph{goal cells} represent destinations, visualised as yellow circles and squares with numbers or letters corresponding to agents or boxes. To \emph{solve} a level, each goal cell must have an object of the correct type on top of it: each yellow square must have a box of the same letter on top of it, and each yellow circle must have the agent with the correct number on top of it. In the level of Figure~\ref{figu:aioli}, only the boxes have destinations.  Agents can only move boxes that have the same color as themselves.  
 
 
 \begin{figure}
@@ -121,34 +121,33 @@ Levels are defined using a textual format, making it easy to design levels using
 \end{figure}
 Each level file is formatted according to the syntax provided in Figure~\ref{figu:level-format}.
 The items in angle brackets (e.g. \texttt{<name>}) are placeholders for content described below, and all lines are terminated by either a line-feed character (LF) or a carriage-return followed by a line-feed (CRLF).
-The first two lines indicate the domain of the problem, which for this project is the hospital domain, and occur verbatim in level files. The \texttt{<name>} field is replaced by the level's name. By convention, single-agent levels begins with \texttt{SA}, and multi-agent levels with \texttt{MA}.
+The first two lines indicate the domain of the problem, which in this case is the hospital domain, and occur verbatim in level files. The \texttt{<name>} field is replaced by the level's name.
 
 \subsection{Initial state and goal state}
 Levels are constructed with initial and goal states using the following conventions:
 \begin{itemize}
     \item \emph{Walls} are represented by the symbol \verb|+|.
-    \item \emph{Agents} are represented by the numbers \verb|0,1,...,9|, with each number identifying a unique agent, so there can be at most 10 agents present in any given level. The first agent should always be named \verb|0|, the second \verb|1|, etc. Hence single-agent levels, those whose names starts with \texttt{SA}, only contain agent \texttt{0}. 
+    \item \emph{Agents} are represented by the numbers \verb|0,1,...,9|, with each number identifying a unique agent, so there can be at most 10 agents present in any given level. The present agents must be consecutively numbered starting from \verb|0|. For example, a level with two agents must use \verb|0| and \verb|1| and not e.g. \verb|3| and \verb|9|.
     \item \emph{Boxes} are represented by capital letters $\verb|A|, \verb|B|, \dots, \verb|Z|$. The letter is used to denote the \emph{type} of the box, e.g.\ one could use the letter \verb|B| for hospital beds. There can be several boxes of the same type (i.e.\ same letter) in a level.
      \item \emph{Free cells} (i.e.\ any cell that is not a wall, an agent or a box) are represented by spaces (ASCII value 32).
 \end{itemize}
 The \texttt{<initial>} and \texttt{<goal>} specifications consist of lines with these symbols as a top-down map, which defines the initial state and goal states of the planning problem respectively. The two specifications must have exactly matching configurations of walls, and should consist of at most $2^{15} - 1$ rows each of at most $2^{15} - 1$ columns. It is required that the agent and all boxes in a level are in areas entirely enclosed by walls. Each symbol in the initial state specifies that a corresponding object starts in that position, and each symbol in the goal state specifies that for the level to be solved, an object of the symbol's type must occupy that cell. The goal states of the planning problem are then all states which have objects in the configuration shown in \texttt{<goal>}, where excess objects can be anywhere (i.e.\ the agent and/or some boxes do not necessarily have to have a goal cell they must reach to solve a level).
 
 \subsection{Colors}
-To allow modelling of different agents having different abilities concerning which boxes they can and can't move, agents and boxes are given colors. An agent can only move a box that has the same color as itself. If we e.g.\  use boxes of type B to represent beds, and if these are red, then only the red agents can move beds.
+To allow modelling of different agents having different abilities concerning which boxes they can and can't move, agents and boxes are given colors. An agent can only move a box that has the same color as itself. If we for example use boxes of type B to represent beds, and if these are red, then only the red agents can move beds.
 
-The \emph{allowed colors} for the agent and boxes are:
+The \emph{allowed colors} for the agents and boxes are:
 \begin{center}
 blue, red, cyan, purple, green, orange, pink, grey, lightblue, brown.
 \end{center}
-To represent the colors of the agent and boxes as part of the textual level representation, each level has the colors section (\texttt{\#colors}). The color declaration \texttt{<colors>} is of the form
+To represent the colors of the agents and boxes as part of the textual level representation, each level has the colors section (\texttt{\#colors}). The color declaration \texttt{<colors>} is of the form
 \begin{verbatim}
 <color>: <object>, <object>, ..., <object>
 <color>: <object>, <object>, ..., <object>
 ...
 <color>: <object>, <object>, ..., <object>
 \end{verbatim}
-where each \texttt{<color>} is an allowed color, and each \texttt{<object>} is either the name of a box type (\texttt{A}, $\dots$, \texttt{Z}) or the name of the agent (\texttt{0,...,9}). Note that this specification forces all boxes of the same type to have the same color (e.g.\ there can't be both a blue and a red \texttt{A} box; all \texttt{A} boxes must have the same color). Each agent and box type used in a level must occur exactly once in the color declaration of the level.
-
+where each \texttt{<color>} is an allowed color, and each \texttt{<object>} is either a box type (\texttt{A}, $\dots$, \texttt{Z}) or an agent (\texttt{0}, $\dots$, \texttt{9}). Note that this specification forces all boxes of a type to have the same color, e.g.\ there can't be both a blue and a red \texttt{A} box; all \texttt{A} boxes must have the same color. Each agent and box type used in a level must occur exactly once in the color declaration of the level, and the declaration may not contain objects that are not present in the level.
 
 \section{Actions}\label{sect:actions}
 A grid cell in a level is called \emph{occupied} if it contains either a wall, an agent, or a box. A cell is called \emph{free} if it is not occupied. Each agent can execute four different types of actions: \emph{moves}, \emph{pushes}, \emph{pulls} and a \emph{no-op}. 
@@ -197,7 +196,7 @@ A move action is represented in the textual form
         \item The neighbouring cell of the agent in direction \texttt{<move-dir-agent>} is currently free.
         \item The neighbouring cell of the agent in the \emph{opposite} direction of \texttt{<move-dir-box>} contains a box $\beta$ of the same color as the agent (where \texttt{N} and \texttt{S} are opposite directions of each other, and similarly for \texttt{W} and \texttt{E}).
     \end{itemize}
-    The result of an applicable pull action will be that the agent moves one cell in direction \texttt{<move-dir-agent>}, and that $\beta$ moves one cell in direction \texttt{<move-dir-box>}.     
+    The result of an applicable pull action will be that the agent moves one cell in direction \texttt{<move-dir-agent>}, and that $\beta$ moves one cell in direction \texttt{<move-dir-box>}. Note that the first condition ensures that a swap is not possible.
    
 \subsection{No-op} The no-op (no operation) action is represented in the textual form \texttt{NoOp}. The action represents the agent doing nothing. It has no parameters and is always \emph{applicable}.
 %\end{enumerate}
@@ -242,7 +241,7 @@ In a joint action, \texttt{<action0>} is the action performed by agent \texttt{0
 \end{figure}
 
 
-A \emph{solution} to a level is any sequence of joint actions that when executed in the initial state will lead to a goal state. As earlier mentioned, a goal state is any state in which each goal cell has an object of the correct type on top of it (is \emph{covered} by an object of the correct type). Figure~\ref{figu:simple_level} shows a simple level, and Figure~\ref{figu:simple_solution} shows a solution to it. The solution is the action sequence \texttt{Move(S)}, \texttt{Pull(N,W)}, \texttt{Push(S,S)}.
+A \emph{solution} to a level is any sequence of joint actions that when executed in the initial state will lead to a goal state. As earlier mentioned, a goal state is any state in which every goal cell has an object of the correct type occupying it. Figure~\ref{figu:simple_level} shows a simple level, and Figure~\ref{figu:simple_solution} shows a solution to it. The solution is the action sequence \texttt{Move(S)}, \texttt{Pull(N,W)}, \texttt{Push(S,S)}.
 
 
 
@@ -296,11 +295,9 @@ where each \texttt{successN} is either \texttt{true} or \texttt{false} indicatin
 \item[6.] Steps 3-5 are repeated until the client shuts down, or the server terminates the client. After the client shuts down or is terminated, the server will write a brief summary of the result to its own \emph{stdout}.
 \end{enumerate}
 
-The client receives the messages from the server on its \emph{stdin}, and sends its own messages to the server on its \emph{stdout}. Anything the client writes on its \emph{stderr} is directly redirected to whatever the server's own \emph{stderr} is connected to (typically the terminal). Thus \emph{stderr} can for instance be used for debugging purposes by writing to it during search (could e.g.\ be to print the generated states and their heuristic values to \emph{stderr}). Table \ref{tbl1:protocol_example} illustrates a complete interaction between a server and client. The given exchange will lead to the level being solved. For details on different modes and options for the server, run the server with the \texttt{-h} argument:
+The client receives the messages from the server on its \emph{stdin}, and sends its own messages to the server on its \emph{stdout}. Anything the client writes on its \emph{stderr} is directly redirected to whatever the server's own \emph{stderr} is connected to (typically the terminal). Thus \emph{stderr} can for instance be used for debugging purposes by writing to it during search; for example, a client may print its generated states and their heuristic values to \emph{stderr}. Table \ref{tbl1:protocol_example} illustrates a complete interaction between a server and client. The given exchange will lead to the level being solved. For details on different modes and options for the server, run the server with the \texttt{-h} argument:
 \begin{verbatim}
     java -jar server.jar -h
 \end{verbatim}
 
 \end{document}
-
-
