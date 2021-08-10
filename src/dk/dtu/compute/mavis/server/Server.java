@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 The Technical University of Denmark
+ * Copyright 2017-2021 The Technical University of Denmark
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
