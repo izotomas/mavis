@@ -59,7 +59,7 @@ This will show you a detailed help description. There are many ways to run the s
 
 The `TestClient.java` client outputs 20,000 random (joint) actions, so the agents will not be doing anything intelligent, but you can watch them shuffle about for a bit.
 
-If you want to see something more advanced, then you can write a client! Instructions for the hospital domain was found in [hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf). Good luck and have fun ^_^
+If you want to see something more advanced, then you can write a client! Instructions for the hospital domain is found in [hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf). Good luck and have fun ^_^
 
 # Developing MAvis
 TODO
