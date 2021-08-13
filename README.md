@@ -61,8 +61,5 @@ The `TestClient.java` client outputs 20,000 random (joint) actions, so the agent
 
 If you want to see something more advanced, then you can write a client! Instructions for the hospital domain is found in [hospital_domain.pdf](docs/domains/hospital/hospital_domain.pdf). Good luck and have fun ^_^
 
-# Developing MAvis
-TODO
-
 # References
 Roni Stern, Nathan R. Sturtevant, Ariel Felner, Sven Koenig, Hang Ma, Thayne T. Walker, Jiaoyang Li, Dor Atzmon, Liron Cohen, T. K. Satish Kumar, Roman Barták, and Eli Boyarski. Multi-agent pathfinding: Definitions, variants, and benchmarks. In _Proceedings of the 12th International Symposium on Combinatorial Search (SoCS)_, pages 151–159, 2019.
