@@ -51,9 +51,6 @@ public class Server
         Thread.currentThread().setName("MainThread");
         Server.printDebug("Thread started.");
 
-        // FIXME: Hotfix for UI scaling.
-        System.setProperty("sun.java2d.uiScale.enabled", "false");
-
         ArgumentParser arguments;
         try
         {
