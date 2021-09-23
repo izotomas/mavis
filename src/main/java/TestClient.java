@@ -61,8 +61,7 @@ public class TestClient
             "Pull(W,W)"
     };
 
-    public static void main(String[] args)
-    throws IOException
+    public static void main(String[] args) throws IOException
     {
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), false, StandardCharsets.US_ASCII));
         var stdin = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII));

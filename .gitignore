@@ -5,6 +5,12 @@
 .idea/usage.statistics.xml
 .idea/workspace.xml
 
+# VS Code files.
+.vscode
+.settings
+
 # Build artifacts.
 out
 target
+.classpath
+.project
