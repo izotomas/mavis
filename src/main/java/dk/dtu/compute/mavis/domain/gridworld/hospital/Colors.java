@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 The Technical University of Denmark
+ * Copyright (C) 2017-2021 The Technical University of Denmark
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
 import java.awt.Color;
