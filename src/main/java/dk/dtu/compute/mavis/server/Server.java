@@ -64,6 +64,8 @@ public class Server {
       case LONG:
         System.out.println(ArgumentParser.getLongHelp());
         return;
+      default:
+        break;
     }
 
     switch (arguments.getServerInputMode()) {

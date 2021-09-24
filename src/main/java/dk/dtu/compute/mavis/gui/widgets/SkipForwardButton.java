@@ -56,7 +56,7 @@ public class SkipForwardButton extends JComponent {
     int height = this.getHeight();
     int margin = (int) (width * 0.15);
     int internalWidth = width - 2 * margin;
-    int internalHeight = height - 2 * margin;
+    // int internalHeight = height - 2 * margin;
     int barWidth = (int) (internalWidth * 0.20);
     int triangleWidth = (int) (internalWidth * 0.50);
     int triangleOverlap = (int) (internalWidth * 0.10);

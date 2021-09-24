@@ -47,7 +47,7 @@ public class TestClient {
     String levelLine;
     int numAgents = 0;
     boolean countAgents = false;
-    String levelName = "";
+    // String levelName = "";
     boolean readLevelName = false;
     while (!(levelLine = stdin.readLine()).equals("#end")) {
       if (levelLine.startsWith("#levelname")) {
@@ -55,7 +55,7 @@ public class TestClient {
         continue;
       }
       if (readLevelName) {
-        levelName = levelLine;
+        // levelName = levelLine;
         readLevelName = false;
         continue;
       }
