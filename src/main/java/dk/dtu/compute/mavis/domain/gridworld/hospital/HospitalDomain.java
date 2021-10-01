@@ -123,10 +123,10 @@ public final class HospitalDomain implements Domain {
 
   public HospitalDomain(Path domainFile, boolean isLogFile) throws IOException, ParseException {
     this.levelFile = domainFile;
-    this.stateSequence = new StateSequence(domainFile, isLogFile);
+    this.stateSequence = new StateSequence(new LevelReader(domainFile, isLogFile).getLevelInfo());
 
     if (isLogFile) {
-      this.clientName = this.stateSequence.clientName;
+      this.clientName = this.stateSequence.levelInfo.clientName;
       this.numActions = this.stateSequence.getNumStates() - 1;
     }
   }
@@ -230,7 +230,7 @@ public final class HospitalDomain implements Domain {
 
     Client.printDebug("Beginning action/comment message exchanges.");
     long numMessages = 0;
-    Action[] jointAction = new Action[this.stateSequence.numAgents];
+    Action[] jointAction = new Action[this.stateSequence.levelInfo.numAgents];
 
     try {
       logWriter.write("#actions");
@@ -281,7 +281,7 @@ public final class HospitalDomain implements Domain {
       } else {
         // Parse action string.
         String[] actionMsg = clientMsg.split("\\|");
-        if (actionMsg.length != this.stateSequence.numAgents) {
+        if (actionMsg.length != this.stateSequence.levelInfo.numAgents) {
           Client.printError("Invalid number of agents in joint action:");
           Client.printError(clientMsg);
           continue;
@@ -374,7 +374,7 @@ public final class HospitalDomain implements Domain {
 
   @Override
   public String getLevelName() {
-    return this.stateSequence.getLevelName();
+    return this.stateSequence.levelInfo.levelName;
   }
 
   @Override
@@ -400,13 +400,13 @@ public final class HospitalDomain implements Domain {
     boolean isSolved = true;
     State state = this.stateSequence.getState(stateID);
     var solvedBoxGoals = this.getSolvedBoxGoals(stateID);
-    if (solvedBoxGoals.nextClearBit(0) != this.stateSequence.numBoxGoals) {
+    if (solvedBoxGoals.nextClearBit(0) != this.stateSequence.levelInfo.numBoxGoals) {
       isSolved = false;
     } else {
-      for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
-        if (this.stateSequence.agentGoalRows[agent] != -1
-            && (this.stateSequence.agentGoalRows[agent] != state.agentRows[agent]
-                || this.stateSequence.agentGoalCols[agent] != state.agentCols[agent])) {
+      for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
+        if (this.stateSequence.levelInfo.agentGoalRows[agent] != -1
+            && (this.stateSequence.levelInfo.agentGoalRows[agent] != state.agentRows[agent]
+                || this.stateSequence.levelInfo.agentGoalCols[agent] != state.agentCols[agent])) {
           isSolved = false;
           break;
         }
@@ -427,8 +427,8 @@ public final class HospitalDomain implements Domain {
 
   @Override
   public void renderDomainBackground(Graphics2D g, int width, int height) {
-    int numRows = this.stateSequence.numRows;
-    int numCols = this.stateSequence.numCols;
+    int numRows = this.stateSequence.levelInfo.numRows;
+    int numCols = this.stateSequence.levelInfo.numCols;
 
     // Determine sizes.
     this.calculateRenderSizes(g, width, height, numRows, numCols);
@@ -457,15 +457,15 @@ public final class HospitalDomain implements Domain {
     }
 
     // Goal cells.
-    for (int boxGoal = 0; boxGoal < this.stateSequence.numBoxGoals; ++boxGoal) {
-      short row = this.stateSequence.boxGoalRows[boxGoal];
-      short col = this.stateSequence.boxGoalCols[boxGoal];
-      byte boxGoalLetter = this.stateSequence.boxGoalLetters[boxGoal];
+    for (int boxGoal = 0; boxGoal < this.stateSequence.levelInfo.numBoxGoals; ++boxGoal) {
+      short row = this.stateSequence.levelInfo.boxGoalRows[boxGoal];
+      short col = this.stateSequence.levelInfo.boxGoalCols[boxGoal];
+      byte boxGoalLetter = this.stateSequence.levelInfo.boxGoalLetters[boxGoal];
       this.drawBoxGoalCell(g, row, col, (char) ('A' + boxGoalLetter), false);
     }
-    for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
-      short row = this.stateSequence.agentGoalRows[agent];
-      short col = this.stateSequence.agentGoalCols[agent];
+    for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
+      short row = this.stateSequence.levelInfo.agentGoalRows[agent];
+      short col = this.stateSequence.levelInfo.agentGoalCols[agent];
       if (row != -1) {
         this.drawAgentGoalCell(g, row, col, (char) ('0' + agent), false);
       }
@@ -478,18 +478,18 @@ public final class HospitalDomain implements Domain {
 
     // Highlight solved goal cells.
     BitSet solvedBoxGoals = this.getSolvedBoxGoals(stateID);
-    for (int boxGoal = 0; boxGoal < this.stateSequence.numBoxGoals; ++boxGoal) {
-      short row = this.stateSequence.boxGoalRows[boxGoal];
-      short col = this.stateSequence.boxGoalCols[boxGoal];
-      byte boxGoalLetter = this.stateSequence.boxGoalLetters[boxGoal];
+    for (int boxGoal = 0; boxGoal < this.stateSequence.levelInfo.numBoxGoals; ++boxGoal) {
+      short row = this.stateSequence.levelInfo.boxGoalRows[boxGoal];
+      short col = this.stateSequence.levelInfo.boxGoalCols[boxGoal];
+      byte boxGoalLetter = this.stateSequence.levelInfo.boxGoalLetters[boxGoal];
       boolean currentSolved = solvedBoxGoals.get(boxGoal);
       if (currentSolved) {
         this.drawBoxGoalCell(g, row, col, (char) ('A' + boxGoalLetter), true);
       }
     }
-    for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
-      short row = this.stateSequence.agentGoalRows[agent];
-      short col = this.stateSequence.agentGoalCols[agent];
+    for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
+      short row = this.stateSequence.levelInfo.agentGoalRows[agent];
+      short col = this.stateSequence.levelInfo.agentGoalCols[agent];
       boolean currentSolved =
           currentState.agentRows[agent] == row && currentState.agentCols[agent] == col;
       if (currentSolved) {
@@ -505,13 +505,14 @@ public final class HospitalDomain implements Domain {
       this.numDynamicAgents = 0;
 
       // Find dynamic boxes and draw static ones.
-      for (int box = 0; box < this.stateSequence.numBoxes; ++box) {
+      for (int box = 0; box < this.stateSequence.levelInfo.numBoxes; ++box) {
         if (currentState.boxRows[box] == nextState.boxRows[box]
             && currentState.boxCols[box] == nextState.boxCols[box]) {
-          byte letter = this.stateSequence.boxLetters[box];
+          byte letter = this.stateSequence.levelInfo.boxLetters[box];
           int top = this.originTop + currentState.boxRows[box] * this.cellSize;
           int left = this.originLeft + currentState.boxCols[box] * this.cellSize;
-          this.drawBox(g, top, left, (char) ('A' + letter), this.stateSequence.boxColors[letter]);
+          this.drawBox(g, top, left, (char) ('A' + letter),
+              this.stateSequence.levelInfo.boxColors[letter]);
         } else {
           this.dynamicBoxes[this.numDynamicBoxes] = box;
           ++this.numDynamicBoxes;
@@ -519,7 +520,7 @@ public final class HospitalDomain implements Domain {
       }
 
       // Find dynamic agents and draw static ones.
-      for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
+      for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
         if (currentState.agentRows[agent] == nextState.agentRows[agent]
             && currentState.agentCols[agent] == nextState.agentCols[agent]) {
           int top = this.originTop + currentState.agentRows[agent] * this.cellSize;
@@ -576,19 +577,19 @@ public final class HospitalDomain implements Domain {
 
     // Un-highlight goal cells that were solved, but are unsolved in this
     // transition.
-    for (int boxGoal = 0; boxGoal < this.stateSequence.numBoxGoals; ++boxGoal) {
-      short row = this.stateSequence.boxGoalRows[boxGoal];
-      short col = this.stateSequence.boxGoalCols[boxGoal];
-      byte boxGoalLetter = this.stateSequence.boxGoalLetters[boxGoal];
+    for (int boxGoal = 0; boxGoal < this.stateSequence.levelInfo.numBoxGoals; ++boxGoal) {
+      short row = this.stateSequence.levelInfo.boxGoalRows[boxGoal];
+      short col = this.stateSequence.levelInfo.boxGoalCols[boxGoal];
+      byte boxGoalLetter = this.stateSequence.levelInfo.boxGoalLetters[boxGoal];
       boolean currentSolved = currentSolvedBoxGoals.get(boxGoal);
       boolean nextSolved = nextSolvedBoxGoals.get(boxGoal);
       if (currentSolved && !nextSolved) {
         this.drawBoxGoalCell(g, row, col, (char) ('A' + boxGoalLetter), false);
       }
     }
-    for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
-      short row = this.stateSequence.agentGoalRows[agent];
-      short col = this.stateSequence.agentGoalCols[agent];
+    for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
+      short row = this.stateSequence.levelInfo.agentGoalRows[agent];
+      short col = this.stateSequence.levelInfo.agentGoalCols[agent];
       boolean currentSolved =
           currentState.agentRows[agent] == row && currentState.agentCols[agent] == col;
       boolean nextSolved = nextState.agentRows[agent] == row && nextState.agentCols[agent] == col;
@@ -604,7 +605,7 @@ public final class HospitalDomain implements Domain {
       this.numDynamicAgents = 0;
 
       // Find dynamic boxes.
-      for (int box = 0; box < this.stateSequence.numBoxes; ++box) {
+      for (int box = 0; box < this.stateSequence.levelInfo.numBoxes; ++box) {
         if (currentState.boxRows[box] != nextState.boxRows[box]
             || currentState.boxCols[box] != nextState.boxCols[box]) {
           this.dynamicBoxes[this.numDynamicBoxes] = box;
@@ -613,7 +614,7 @@ public final class HospitalDomain implements Domain {
       }
 
       // Find dynamic agents.
-      for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
+      for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
         if (currentState.agentRows[agent] != nextState.agentRows[agent]
             || currentState.agentCols[agent] != nextState.agentCols[agent]) {
           this.dynamicAgents[this.numDynamicAgents] = agent;
@@ -683,14 +684,15 @@ public final class HospitalDomain implements Domain {
       // Draw dynamic boxes.
       for (int dynamicBox = 0; dynamicBox < this.numDynamicBoxes; ++dynamicBox) {
         int box = this.dynamicBoxes[dynamicBox];
-        byte letter = this.stateSequence.boxLetters[box];
+        byte letter = this.stateSequence.levelInfo.boxLetters[box];
         int cTop = this.originTop + currentState.boxRows[box] * this.cellSize;
         int cLeft = this.originLeft + currentState.boxCols[box] * this.cellSize;
         int nTop = this.originTop + nextState.boxRows[box] * this.cellSize;
         int nLeft = this.originLeft + nextState.boxCols[box] * this.cellSize;
         int iTop = (int) (cTop + (nTop - cTop) * interpolation);
         int iLeft = (int) (cLeft + (nLeft - cLeft) * interpolation);
-        this.drawBox(g, iTop, iLeft, (char) ('A' + letter), this.stateSequence.boxColors[letter]);
+        this.drawBox(g, iTop, iLeft, (char) ('A' + letter),
+            this.stateSequence.levelInfo.boxColors[letter]);
       }
 
       // Draw dynamic agents.
@@ -706,19 +708,20 @@ public final class HospitalDomain implements Domain {
       }
     } else {
       // Draw all boxes.
-      for (int box = 0; box < this.stateSequence.numBoxes; ++box) {
-        byte letter = this.stateSequence.boxLetters[box];
+      for (int box = 0; box < this.stateSequence.levelInfo.numBoxes; ++box) {
+        byte letter = this.stateSequence.levelInfo.boxLetters[box];
         int cTop = this.originTop + currentState.boxRows[box] * this.cellSize;
         int cLeft = this.originLeft + currentState.boxCols[box] * this.cellSize;
         int nTop = this.originTop + nextState.boxRows[box] * this.cellSize;
         int nLeft = this.originLeft + nextState.boxCols[box] * this.cellSize;
         int iTop = (int) (cTop + (nTop - cTop) * interpolation);
         int iLeft = (int) (cLeft + (nLeft - cLeft) * interpolation);
-        this.drawBox(g, iTop, iLeft, (char) ('A' + letter), this.stateSequence.boxColors[letter]);
+        this.drawBox(g, iTop, iLeft, (char) ('A' + letter),
+            this.stateSequence.levelInfo.boxColors[letter]);
       }
 
       // Draw all agents.
-      for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
+      for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
         int cTop = this.originTop + currentState.agentRows[agent] * this.cellSize;
         int cLeft = this.originLeft + currentState.agentCols[agent] * this.cellSize;
         int nTop = this.originTop + nextState.agentRows[agent] * this.cellSize;
@@ -731,9 +734,10 @@ public final class HospitalDomain implements Domain {
   }
 
   public void initializeGraphics() {
-    for (byte agent = 0; agent < this.stateSequence.numAgents; ++agent) {
-      this.agentArmColor[agent] = this.stateSequence.agentColors[agent].darker();
-      this.agentOutlineColor[agent] = this.stateSequence.agentColors[agent].darker().darker();
+    for (byte agent = 0; agent < this.stateSequence.levelInfo.numAgents; ++agent) {
+      this.agentArmColor[agent] = this.stateSequence.levelInfo.agentColors[agent].darker();
+      this.agentOutlineColor[agent] =
+          this.stateSequence.levelInfo.agentColors[agent].darker().darker();
     }
 
     baseFont = Fonts.getDejaVuSansMono();
@@ -847,14 +851,14 @@ public final class HospitalDomain implements Domain {
     BitSet solvedBoxGoals = this.stateSolvedBoxGoals[stateID];
     if (solvedBoxGoals == null) {
       State state = this.stateSequence.getState(stateID);
-      solvedBoxGoals = new BitSet(this.stateSequence.numBoxGoals);
+      solvedBoxGoals = new BitSet(this.stateSequence.levelInfo.numBoxGoals);
 
-      for (int box = 0; box < this.stateSequence.numBoxes; ++box) {
+      for (int box = 0; box < this.stateSequence.levelInfo.numBoxes; ++box) {
         short boxRow = state.boxRows[box];
         short boxCol = state.boxCols[box];
-        byte boxLetter = this.stateSequence.boxLetters[box];
+        byte boxLetter = this.stateSequence.levelInfo.boxLetters[box];
         int boxGoal = this.stateSequence.findBoxGoal(boxRow, boxCol);
-        if (boxGoal != -1 && boxLetter == this.stateSequence.boxGoalLetters[boxGoal]) {
+        if (boxGoal != -1 && boxLetter == this.stateSequence.levelInfo.boxGoalLetters[boxGoal]) {
           solvedBoxGoals.set(boxGoal);
         }
       }
@@ -916,7 +920,7 @@ public final class HospitalDomain implements Domain {
     int size = this.cellSize - 2 * this.cellBoxMargin;
 
     // Agent fill.
-    g.setColor(this.stateSequence.agentColors[agent]);
+    g.setColor(this.stateSequence.levelInfo.agentColors[agent]);
     g.fillOval(left + this.cellBoxMargin, top + this.cellBoxMargin, size, size);
 
     // Agent outline.

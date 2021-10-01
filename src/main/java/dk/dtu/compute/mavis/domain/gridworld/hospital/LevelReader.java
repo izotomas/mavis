@@ -42,7 +42,7 @@ class LevelReader {
     this.domainFile = domainFile;
     this.isLogFile = isLogFile;
   }
-  
+
   /**
    * Parses the given level file to construct a new state sequence.
    */
@@ -92,7 +92,7 @@ class LevelReader {
 
         // If this is a log file, then parse additional sections.
         if (isLogFile) {
-          
+
           this.stateSequence = new StateSequence(this.levelInfo);
 
           // Parse client name.
@@ -142,6 +142,8 @@ class LevelReader {
           throw new ParseException("Expected no more content after end section.",
               levelReader.getLineNumber());
         }
+
+        this.levelInfo.initialSequence = this.stateSequence;
       } catch (MalformedInputException e) {
         throw new ParseException("Level file content not valid ASCII.",
             levelReader.getLineNumber());
@@ -274,7 +276,8 @@ class LevelReader {
 
       // If current cell is at level boundary, then agent is not in an area enclosed
       // by walls.
-      if (row == 0 || row == this.levelInfo.numRows - 1 || col == 0 || col == this.levelInfo.numCols - 1) {
+      if (row == 0 || row == this.levelInfo.numRows - 1 || col == 0
+          || col == this.levelInfo.numCols - 1) {
         return false;
       }
 
@@ -495,9 +498,9 @@ class LevelReader {
     }
 
     // Create initial state.
-    State initialState =
-        new State(Arrays.copyOf(boxRows, numBoxes), Arrays.copyOf(boxCols, numBoxes),
-            Arrays.copyOf(agentRows, this.levelInfo.numAgents), Arrays.copyOf(agentCols, this.levelInfo.numAgents));
+    State initialState = new State(Arrays.copyOf(boxRows, numBoxes),
+        Arrays.copyOf(boxCols, numBoxes), Arrays.copyOf(agentRows, this.levelInfo.numAgents),
+        Arrays.copyOf(agentCols, this.levelInfo.numAgents));
 
     this.levelInfo.initialState = initialState;
 
