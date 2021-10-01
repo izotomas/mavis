@@ -1108,14 +1108,17 @@ class StateSequence {
    * otherwise.
    */
   private boolean[] isApplicable(Action[] jointAction, State currentState) {
-    boolean[] applicable = new boolean[this.numAgents];
-    short[] destRows = new short[this.numAgents];
-    short[] destCols = new short[this.numAgents];
-    short[] boxRows = new short[this.numAgents];
-    short[] boxCols = new short[this.numAgents];
+    // TODO: could be set as some external context, when in separate class
+    var numAgents = currentState.agentRows.length;
+
+    boolean[] applicable = new boolean[numAgents];
+    short[] destRows = new short[numAgents];
+    short[] destCols = new short[numAgents];
+    short[] boxRows = new short[numAgents];
+    short[] boxCols = new short[numAgents];
 
     // Test applicability.
-    for (byte agent = 0; agent < this.numAgents; ++agent) {
+    for (byte agent = 0; agent < numAgents; ++agent) {
       Action action = jointAction[agent];
       short agentRow = currentState.agentRows[agent];
       short agentCol = currentState.agentCols[agent];
@@ -1158,8 +1161,8 @@ class StateSequence {
     }
 
     // Test conflicts.
-    boolean[] conflicting = new boolean[this.numAgents];
-    for (byte a1 = 0; a1 < this.numAgents; ++a1) {
+    boolean[] conflicting = new boolean[numAgents];
+    for (byte a1 = 0; a1 < numAgents; ++a1) {
       if (!applicable[a1] || jointAction[a1] == Action.NoOp) {
         continue;
       }
@@ -1182,7 +1185,7 @@ class StateSequence {
       }
     }
 
-    for (byte agent = 0; agent < this.numAgents; ++agent) {
+    for (byte agent = 0; agent < numAgents; ++agent) {
       applicable[agent] &= !conflicting[agent];
     }
 
