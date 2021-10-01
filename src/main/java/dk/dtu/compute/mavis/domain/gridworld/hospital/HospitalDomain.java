@@ -121,9 +121,13 @@ public final class HospitalDomain implements Domain {
   // for that to be efficiently computable.
   private BitSet[] stateSolvedBoxGoals = new BitSet[1024];
 
+  private Validator validator;
+
   public HospitalDomain(Path domainFile, boolean isLogFile) throws IOException, ParseException {
     this.levelFile = domainFile;
-    this.stateSequence = new StateSequence(new LevelReader(domainFile, isLogFile).getLevelInfo());
+    var levelInfo = new LevelReader(domainFile, isLogFile).getLevel();
+    this.stateSequence = new StateSequence(levelInfo);
+    this.validator = new HospitalValidator(levelInfo);
 
     if (isLogFile) {
       this.clientName = this.stateSequence.levelInfo.clientName;
@@ -297,15 +301,17 @@ public final class HospitalDomain implements Domain {
 
         // Execute action.
         long actionTime = System.nanoTime() - startNS;
-        boolean[] result = this.stateSequence.execute(jointAction, actionTime);
+        State currentState = this.stateSequence.getState(this.stateSequence.getNumStates() - 1);
+        boolean[] applicable = this.validator.isApplicable(jointAction, currentState);
+        this.stateSequence.apply(jointAction, applicable, actionTime);
         ++this.numActions;
 
         // Write response.
         try {
-          clientWriter.write(result[0] ? "true" : "false");
-          for (int i = 1; i < result.length; ++i) {
+          clientWriter.write(applicable[0] ? "true" : "false");
+          for (int i = 1; i < applicable.length; ++i) {
             clientWriter.write("|");
-            clientWriter.write(result[i] ? "true" : "false");
+            clientWriter.write(applicable[i] ? "true" : "false");
           }
           clientWriter.newLine();
           clientWriter.flush();
@@ -446,7 +452,7 @@ public final class HospitalDomain implements Domain {
       int top = this.originTop + row * this.cellSize;
       for (short col = 0; col < numCols; ++col) {
         int left = this.originLeft + col * this.cellSize;
-        if (this.stateSequence.wallAt(row, col)) {
+        if (this.stateSequence.levelInfo.wallAt(row, col)) {
           g.setColor(WALL_COLOR);
           g.fillRect(left, top, this.cellSize, this.cellSize);
         } else {
@@ -857,7 +863,7 @@ public final class HospitalDomain implements Domain {
         short boxRow = state.boxRows[box];
         short boxCol = state.boxCols[box];
         byte boxLetter = this.stateSequence.levelInfo.boxLetters[box];
-        int boxGoal = this.stateSequence.findBoxGoal(boxRow, boxCol);
+        int boxGoal = this.stateSequence.levelInfo.findBoxGoal(boxRow, boxCol);
         if (boxGoal != -1 && boxLetter == this.stateSequence.levelInfo.boxGoalLetters[boxGoal]) {
           solvedBoxGoals.set(boxGoal);
         }

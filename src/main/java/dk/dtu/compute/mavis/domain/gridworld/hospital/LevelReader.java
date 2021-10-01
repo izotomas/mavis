@@ -37,16 +37,18 @@ class LevelReader {
   private final boolean isLogFile;
   private LevelInfo levelInfo;
   private StateSequence stateSequence;
+  private Validator validator;
 
   LevelReader(Path domainFile, boolean isLogFile) {
     this.domainFile = domainFile;
     this.isLogFile = isLogFile;
+    this.validator = null;
   }
 
   /**
    * Parses the given level file to construct a new state sequence.
    */
-  public LevelInfo getLevelInfo() throws IOException, ParseException {
+  public LevelInfo getLevel() throws IOException, ParseException {
     this.levelInfo = new LevelInfo();
     var tStart = System.nanoTime();
 
@@ -89,6 +91,7 @@ class LevelReader {
           throw new ParseException("Expected end section (#end).", levelReader.getLineNumber());
         }
         line = parseEndSection(levelReader);
+        this.validator = new HospitalValidator(levelInfo);
 
         // If this is a log file, then parse additional sections.
         if (isLogFile) {
@@ -690,7 +693,9 @@ class LevelReader {
       }
 
       // Execute action.
-      this.stateSequence.execute(jointAction, actionTime);
+      State state = this.stateSequence.getState(this.stateSequence.getNumStates() - 1);
+      boolean[] applicable = this.validator.isApplicable(jointAction, state);
+      this.stateSequence.apply(jointAction, applicable, actionTime);
     }
   }
 

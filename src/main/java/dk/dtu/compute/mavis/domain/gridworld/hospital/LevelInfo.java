@@ -192,5 +192,4 @@ class LevelInfo {
   boolean wallAt(short row, short col) {
     return this.walls.get(row * this.numCols + col);
   }
-
 }

@@ -100,21 +100,6 @@ class StateSequence {
   }
 
   /**
-   * Returns whether there is a wall at the given (row, col). Complexity: O(1).
-   */
-  boolean wallAt(short row, short col) {
-    return this.levelInfo.wallAt(row, col);
-  }
-
-  /**
-   * Binary searches for a box goal cell at the given (row, col) and returns the
-   * index if found, and -1 otherwise. Complexity: O(log(numBoxGoals)).
-   */
-  int findBoxGoal(short row, short col) {
-    return this.levelInfo.findBoxGoal(row, col);
-  }
-
-  /**
    * Does a binary search over the sorted boxes in the latest state, and returns
    * the index in the sorted order where the box with the given (row, col) should
    * be. Complexity: O(log(numBoxes)).
@@ -200,130 +185,18 @@ class StateSequence {
   }
 
   /**
-   * Search for an agent at the given (row, col) in the latest state. Returns
-   * agent ID (0..9) if found, and -1 otherwise. Complexity: O(numAgents).
-   */
-  byte agentAt(short row, short col) {
-    State currentState = this.states[this.numStates - 1];
-    for (byte a = 0; a < this.levelInfo.numAgents; ++a) {
-      if (currentState.agentRows[a] == row && currentState.agentCols[a] == col) {
-        return a;
-      }
-    }
-    return -1;
-  }
-
-  /**
    * Moves the given agent to the given (row, col). Complexity: O(1).
    */
-  void moveAgent(State newState, byte agent, short row, short col) {
+  private void moveAgent(State newState, byte agent, short row, short col) {
     newState.agentRows[agent] = row;
     newState.agentCols[agent] = col;
-  }
-
-  /**
-   * Checks if the given cell is free (no wall, box, or agent occupies it).
-   * Complexity: O(log(numBoxes) + numAgents).
-   */
-  boolean freeAt(short row, short col) {
-    return !this.wallAt(row, col) && this.boxAt(row, col) == -1 && this.agentAt(row, col) == -1;
-  }
-
-  /**
-   * Determines which actions are applicable and non-conflicting. Returns an array
-   * with true for each action which was applicable and non-conflicting, and false
-   * otherwise.
-   */
-  boolean[] isApplicable(Action[] jointAction, State currentState) {
-    // TODO: could be set as some external context, when in separate class
-    var numAgents = currentState.agentRows.length;
-
-    boolean[] applicable = new boolean[numAgents];
-    short[] destRows = new short[numAgents];
-    short[] destCols = new short[numAgents];
-    short[] boxRows = new short[numAgents];
-    short[] boxCols = new short[numAgents];
-
-    // Test applicability.
-    for (byte agent = 0; agent < numAgents; ++agent) {
-      Action action = jointAction[agent];
-      short agentRow = currentState.agentRows[agent];
-      short agentCol = currentState.agentCols[agent];
-      boxRows[agent] = (short) (agentRow + action.boxDeltaRow);
-      boxCols[agent] = (short) (agentCol + action.boxDeltaCol);
-      byte boxLetter;
-
-      // Test for applicability.
-      switch (action.type) {
-        case NoOp:
-          applicable[agent] = true;
-          break;
-
-        case Move:
-          destRows[agent] = (short) (agentRow + action.moveDeltaRow);
-          destCols[agent] = (short) (agentCol + action.moveDeltaCol);
-          applicable[agent] = this.freeAt(destRows[agent], destCols[agent]);
-          break;
-
-        case Push:
-          boxLetter = this.boxAt(boxRows[agent], boxCols[agent]);
-          destRows[agent] = (short) (boxRows[agent] + action.moveDeltaRow);
-          destCols[agent] = (short) (boxCols[agent] + action.moveDeltaCol);
-          applicable[agent] = boxLetter != -1
-              && this.levelInfo.agentColors[agent] == this.levelInfo.boxColors[boxLetter]
-              && this.freeAt(destRows[agent], destCols[agent]);
-          break;
-
-        case Pull:
-          boxRows[agent] = (short) (agentRow - action.boxDeltaRow);
-          boxCols[agent] = (short) (agentCol - action.boxDeltaCol);
-          boxLetter = this.boxAt(boxRows[agent], boxCols[agent]);
-          destRows[agent] = (short) (agentRow + action.moveDeltaRow);
-          destCols[agent] = (short) (agentCol + action.moveDeltaCol);
-          applicable[agent] = boxLetter != -1
-              && this.levelInfo.agentColors[agent] == this.levelInfo.boxColors[boxLetter]
-              && this.freeAt(destRows[agent], destCols[agent]);
-          break;
-      }
-    }
-
-    // Test conflicts.
-    boolean[] conflicting = new boolean[numAgents];
-    for (byte a1 = 0; a1 < numAgents; ++a1) {
-      if (!applicable[a1] || jointAction[a1] == Action.NoOp) {
-        continue;
-      }
-      for (byte a2 = 0; a2 < a1; ++a2) {
-        if (!applicable[a2] || jointAction[a2] == Action.NoOp) {
-          continue;
-        }
-
-        // Objects moving into same cell?
-        if (destRows[a1] == destRows[a2] && destCols[a1] == destCols[a2]) {
-          conflicting[a1] = true;
-          conflicting[a2] = true;
-        }
-
-        // Moving same box?
-        if (boxRows[a1] == boxRows[a2] && boxCols[a1] == boxCols[a2]) {
-          conflicting[a1] = true;
-          conflicting[a2] = true;
-        }
-      }
-    }
-
-    for (byte agent = 0; agent < numAgents; ++agent) {
-      applicable[agent] &= !conflicting[agent];
-    }
-
-    return applicable;
   }
 
   /**
    * Applies the actions in jointAction which are applicable to the latest state
    * and returns the resulting state.
    */
-  private State apply(Action[] jointAction, boolean[] applicable) {
+  State apply(Action[] jointAction, boolean[] applicable, long actionTime) {
     State currentState = this.states[this.numStates - 1];
     State newState = new State(currentState);
 
@@ -376,20 +249,6 @@ class StateSequence {
       }
     }
 
-    return newState;
-  }
-
-  /**
-   * Execute a joint action. Returns a boolean array with success for each agent.
-   */
-  boolean[] execute(Action[] jointAction, long actionTime) {
-    // Determine applicable and non-conflicting actions.
-    var currentState = this.states[this.numStates - 1];
-    boolean[] applicable = this.isApplicable(jointAction, currentState);
-
-    // Create new state with applicable and non-conflicting actions.
-    State newState = this.apply(jointAction, applicable);
-
     // Update this.states and this.numStates. Grow as necessary.
     if (this.allowDiscardingPastStates) {
       this.states[0] = newState;
@@ -411,6 +270,6 @@ class StateSequence {
       ++this.numStates;
     }
 
-    return applicable;
+    return newState;
   }
 }
