@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
 import dk.dtu.compute.mavis.domain.ParseException;
@@ -1106,9 +1107,7 @@ class StateSequence {
    * with true for each action which was applicable and non-conflicting, and false
    * otherwise.
    */
-  private boolean[] isApplicable(Action[] jointAction) {
-    State currentState = this.states[this.numStates - 1];
-
+  private boolean[] isApplicable(Action[] jointAction, State currentState) {
     boolean[] applicable = new boolean[this.numAgents];
     short[] destRows = new short[this.numAgents];
     short[] destCols = new short[this.numAgents];
@@ -1255,7 +1254,8 @@ class StateSequence {
    */
   boolean[] execute(Action[] jointAction, long actionTime) {
     // Determine applicable and non-conflicting actions.
-    boolean[] applicable = this.isApplicable(jointAction);
+    var currentState = this.states[this.numStates - 1];
+    boolean[] applicable = this.isApplicable(jointAction, currentState);
 
     // Create new state with applicable and non-conflicting actions.
     State newState = this.apply(jointAction, applicable);
