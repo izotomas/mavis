@@ -17,37 +17,16 @@ A final example is the multi-agent level below with a lot of potential for confl
 https://user-images.githubusercontent.com/11925062/128043884-608c2020-95ec-41f4-8088-170c6cf1c4df.mp4
 
 # Building MAvis
-MAvis is developed in Java using an IntelliJ IDEA project.
+MAvis is developed in Java.
 
 To build MAvis you will need to have installed:
-* IntelliJ IDEA (https://www.jetbrains.com/idea/)
-* JDK 17 or newer (e.g. https://openjdk.java.net/)
+* Maven (https://maven.apache.org)
 
-You can get IntelliJ to download a JDK for you during step 4 in the next instructions, in case you don't want to download and install it yourself.
-
-The build steps are then:
-1. Clone this repository.
-2. Launch IntelliJ.
-3. Select "File -> Open..." and choose the folder you cloned the repository into.
-4. Configure an SDK in IntelliJ (https://www.jetbrains.com/help/idea/sdk.html):
-   1. Select "File -> Project Structure..."
-   2. Open the "SDKs" tab.
-   3. Create a new JDK by clicking the plus symbol in the top; add or download per your preference. Name the new SDK "MAvis JDK".
-   4. Confirm in the "Project" tab that your configured SDK is used as the "Project SDK".
-5. Select "Build -> Build Project".
-
+The build steps are:
+```bash
+$ mvn package
+```
 You should now see the project built in the `out/` folder. You find the jar file as `out/server.jar`.
-
-**Lamenting step 4 above**: SDKs in IntelliJ are global, but a project defines an SDK to use and this choice is under version control in the `.idea/misc.xml` file. This ultimately means that everyone who wants to build the project must either:
-* Configure a global SDK with the same name, or
-* Change the project's chosen SDK to a configured SDK of choice.
-
-The second option causes you to have modified a tracked file that shouldn't be committed back, leaving your git status cluttered. `git commit -a` has become a trap, and I'm not aware of any good way to work around this.
-
-We recommend you opt for the first option to manage the project's SDK, since it requires a one-time effort at first setup and then gets out of your way. If you have a thousand IntelliJ projects that follow this practise, then you might be inconvenienced by the long list of global SDKs. Sorry about that.
-
-Ideally, the SDK for the project would not have been under version control.
-
 # Running MAvis
 Assuming you built MAvis and have a terminal with the current working directory in the project's root folder, you can start with:
 
