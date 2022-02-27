@@ -8,6 +8,10 @@ public class FontsTest {
 
   @Test
   public void fontLoadsTest() {
-    assertThat(Fonts.getDejaVuSansMono()).isNotNull();
+    // act
+    var fonts = Fonts.getDejaVuSansMono();
+
+    // assert
+    assertThat(fonts).isNotNull();
   }
 }
