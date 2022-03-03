@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl;
+package dk.dtu.compute.cdl.model;
 
 import org.javatuples.*;
 
 
-public class Action {
+public class Action implements ValidationContext {
   private final Pair<Integer, Integer> origin;
   private final Pair<Integer, Integer> destination;
   private final int time;
