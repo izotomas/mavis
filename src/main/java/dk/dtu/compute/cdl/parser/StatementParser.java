@@ -16,31 +16,9 @@
 package dk.dtu.compute.cdl.parser;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class StatementParser {
-
-  public class StatementBuilder {
-    protected final HashMap<String, String> contextMap;
-
-    public StatementBuilder() {
-      this.contextMap = new HashMap<>();
-    }
-
-
-    protected StatementBuilder withContextMapping(SimpleEntry<String, String> entry)
-        throws IllegalArgumentException {
-      var key = entry.getKey();
-      var val = entry.getValue();
-      if (key.isEmpty() || val.isEmpty() || this.contextMap.containsKey(key)) {
-        throw new IllegalArgumentException(String.format(
-            "Context mapping must be unique and non null.\n\tKey: %s | Value: %s", key, val));
-      }
-      this.contextMap.put(key, val);
-      return this;
-    }
-  }
 
   public StatementBuilder builder;
   public String contextString;
@@ -85,37 +63,32 @@ public class StatementParser {
           + ")+$");
 
   private final static Pattern predicateExtractorPattern = Pattern.compile(
-      // start
-      "^(?:"
-          // predicate connector
-          + "(?:\\h(?:(?:AND|OR)(?:\\hNOT)?)\\h|^)"
-          // operand1
-          + "(?:[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
-          // operator
-          + "\\h(?:[A-Z]+(?:\\h[A-Z]+)*)\\h"
-          // operand2
-          + "(?:[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
-          // repeat until end
-          + ")+$");
+      // predicate connector
+      "(?:\\h(?<connector>(?:AND|OR)(?:\\hNOT)?)\\h|^)"
+          // predicate operands and operator
+          + "(?<operand1>[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
+          + "\\h(?<operator>[A-Z]+(?:\\h[A-Z]+)*)\\h"
+          + "(?<operand2>[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)");
 
 
   public StatementParser() {
     this.builder = new StatementBuilder();
   }
 
-
   public StatementBuilder Parse(String constraintDefinition) throws StatementParsingException {
-    var builder = new StatementBuilder();
+    this.builder = new StatementBuilder();
+    this.contextString = null;
+    this.predicateString = null;
     try {
       ParseInitial(constraintDefinition);
       ParseContext(this.contextString);
+      ParsePredicate(this.predicateString);
 
       return builder;
     } catch (Exception e) {
       throw new StatementParsingException(e.getMessage());
     }
   }
-
 
   /**
    * Splits constraint definition into context and predicate
