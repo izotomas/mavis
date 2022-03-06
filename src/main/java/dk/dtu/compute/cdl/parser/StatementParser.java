@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class StatementParser {
 
   public class StatementBuilder {
-    private final HashMap<String, String> contextMap;
+    protected final HashMap<String, String> contextMap;
 
     public StatementBuilder() {
       this.contextMap = new HashMap<>();
@@ -149,7 +149,7 @@ public class StatementParser {
           "Context definition does not match the required pattern.\n\tStatement: %s\n\tPattern: %s",
           context, StatementParser.contextPattern.pattern()));
     }
-    for (var groupName : new String[] {"entry1, entry2"}) {
+    for (var groupName : new String[] {"entry1", "entry2"}) {
       var value = matcher.group(groupName);
       if (value != null) {
         builder.withContextMapping(new SimpleEntry<String, String>(groupName, value));
