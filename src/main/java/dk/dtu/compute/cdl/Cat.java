@@ -13,29 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.model;
+package dk.dtu.compute.cdl;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
+import java.awt.Color;
 
+public class Cat {
+  boolean isFluffy;
+  boolean isHungry;
+  Color color;
+  String name;
 
-public class MultiContext implements ValidationContext {
+  public Cat() {}
 
-  private final HashMap<String, Object> map;
+  public Cat(boolean isFluffy, boolean isHungry, Color color, String name) {
+    this.isFluffy = isFluffy;
+    this.isHungry = isHungry;
+    this.color = color;
+    this.name = name;
 
-  @SafeVarargs
-  public MultiContext(AbstractMap.SimpleEntry<String, Object>... entries) {
-    this.map = new HashMap<>();
-
-    for (AbstractMap.SimpleEntry<String, Object> entry : entries) {
-      map.put(entry.getKey(), entry.getValue());
-    }
   }
 
-  public Object get(String key) {
-    if (this.map.containsKey(key)) {
-      return this.map.get(key);
-    }
-    throw new IllegalArgumentException();
+  boolean isFluffy() {
+    return this.isFluffy;
+  }
+
+  boolean isHungry() {
+    return this.isHungry;
+  }
+
+  Color getColor() {
+    return this.color;
+  }
+
+  boolean equals(String name) {
+    return this.name.equals(name);
   }
 }

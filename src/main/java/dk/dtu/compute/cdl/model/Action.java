@@ -17,12 +17,11 @@ package dk.dtu.compute.cdl.model;
 
 import org.javatuples.*;
 
-
-public class Action implements ValidationContext {
-  private final Pair<Integer, Integer> origin;
-  private final Pair<Integer, Integer> destination;
-  private final int time;
-  private final String name;
+public class Action {
+  public final Pair<Integer, Integer> origin;
+  public final Pair<Integer, Integer> destination;
+  public final int time;
+  public final String name;
 
   public Action(Pair<Integer, Integer> origin, Pair<Integer, Integer> destination, int time,
       String name) {
@@ -30,25 +29,5 @@ public class Action implements ValidationContext {
     this.destination = destination;
     this.time = time;
     this.name = name;
-  }
-
-  public Object get(String key) {
-    switch (key) {
-      case "dest":
-      case "destination":
-        return this.destination;
-      case "orig":
-      case "origin":
-        return this.origin;
-      case "time":
-        return this.time;
-      case "name":
-        return this.name;
-      case "edge":
-        return new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(this.origin,
-            this.destination);
-      default:
-        throw new IllegalArgumentException();
-    }
   }
 }
