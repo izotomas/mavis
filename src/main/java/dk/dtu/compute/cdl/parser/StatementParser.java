@@ -15,10 +15,16 @@
  */
 package dk.dtu.compute.cdl.parser;
 
+import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
 
 public class StatementParser {
+
+  private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
+  private final String[] EXPRESSION_BLOCKS =
+      new String[] {"connector", "operand1", "operator", "operand2"};
+
 
   public StatementBuilder builder;
   public String contextString;
@@ -122,7 +128,7 @@ public class StatementParser {
           "Context definition does not match the required pattern.\n\tStatement: %s\n\tPattern: %s",
           context, StatementParser.contextPattern.pattern()));
     }
-    for (var groupName : new String[] {"entry1", "entry2"}) {
+    for (var groupName : ALLOWED_CONTEXT_KEYS) {
       var value = matcher.group(groupName);
       if (value != null) {
         builder.withContextMapping(new SimpleEntry<String, String>(groupName, value));
@@ -137,8 +143,22 @@ public class StatementParser {
           "Predicate definition does not match the required pattern.\n\tPredicate: %s\n\tPattern: %s",
           predicate, StatementParser.predicateValidationPattern.pattern()));
     }
-
-
-
+    matcher = StatementParser.predicateExtractorPattern.matcher(predicate);
+    var index = 0;
+    while (matcher.find()) {
+      for (var groupName : EXPRESSION_BLOCKS) {
+        if (index == 0 && groupName == "connector") {
+          continue;
+        }
+        var token = matcher.group(groupName);
+        if (token == null) {
+          throw new StatementParsingException(
+              String.format("Missing or invalid %s.\n\tPredicate: %s\n\tPattern: %s", groupName,
+                  predicate, StatementParser.predicateExtractorPattern.pattern()));
+        }
+        builder.withPredicateToken(token);
+      }
+      index++;
+    }
   }
 }

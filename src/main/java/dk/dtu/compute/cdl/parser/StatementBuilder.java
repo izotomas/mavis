@@ -17,19 +17,40 @@ package dk.dtu.compute.cdl.parser;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import dk.dtu.compute.cdl.model.Action;
+import dk.dtu.compute.cdl.model.Expression;
 
 public class StatementBuilder {
+
+  private enum PredicateParsingState {
+    OPERAND1, OPERATOR, OPERAND2, CONNECTOR,
+  }
+
   private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
+  private PredicateParsingState predicateStateMachine;
+  private Expression currentExpression;
+
   protected final HashMap<String, String> contextMap;
 
   protected Action contextEntry1;
   protected Action contextEntry2;
+  protected final LinkedList<Expression> expressionList;
 
   public StatementBuilder() {
+    this.predicateStateMachine = PredicateParsingState.OPERAND1;
+    this.currentExpression = new Expression();
     this.contextMap = new HashMap<>();
+    this.expressionList = new LinkedList<>();
+
+    this.expressionList.add(currentExpression);
+  }
+
+  public void Build() {
+    // validate
+
   }
 
   public StatementBuilder withPrimaryActionContext(Action action) {
@@ -61,6 +82,33 @@ public class StatementBuilder {
           Arrays.toString(ALLOWED_CONTEXT_KEYS.toArray())));
     }
     this.contextMap.put(key, val);
+    return this;
+  }
+
+  protected StatementBuilder withPredicateToken(String token) throws IllegalArgumentException {
+    if (token == null || token.isEmpty()) {
+      throw new IllegalArgumentException("Predicate token may not be null or empty.");
+    }
+    switch (predicateStateMachine) {
+      case OPERAND1:
+        currentExpression.operand1 = token;
+        predicateStateMachine = PredicateParsingState.OPERATOR;
+        break;
+      case OPERATOR:
+        currentExpression.operator = token;
+        predicateStateMachine = PredicateParsingState.OPERAND2;
+        break;
+      case OPERAND2:
+        currentExpression.operand2 = token;
+        predicateStateMachine = PredicateParsingState.CONNECTOR;
+        break;
+      case CONNECTOR:
+        currentExpression.connector = token;
+        currentExpression = new Expression();
+        expressionList.add(currentExpression);
+        predicateStateMachine = PredicateParsingState.OPERAND1;
+        break;
+    }
     return this;
   }
 }

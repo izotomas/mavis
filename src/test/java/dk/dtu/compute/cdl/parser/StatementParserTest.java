@@ -42,6 +42,25 @@ public class StatementParserTest {
     assertThat(actualEntry2).isEqualTo(expectedEntry2);
   }
 
+  @ParameterizedTest
+  @MethodSource("provideStringsForPredicateParsing")
+  public void predicateParsingTest(String predicate, int expectedExpressionCount)
+      throws StatementParsingException {
+    // arrange
+    var sut = new StatementParser();
+
+    // act
+    sut.ParsePredicate(predicate);
+    var actual = sut.builder.expressionList;
+
+    // assert
+    assertThat(actual.size()).isEqualTo(expectedExpressionCount);
+  }
+
+  private static Stream<Arguments> provideStringsForPredicateParsing() {
+    return Stream.of(Arguments.of("a.name IS 'NoOp' AND a.time IS LESS THAN 10", 2),
+        Arguments.of("action.dest IS other.origin", 1));
+  }
 
   private static Stream<Arguments> provideStringsForInitialParsing() {
     return Stream.of(
