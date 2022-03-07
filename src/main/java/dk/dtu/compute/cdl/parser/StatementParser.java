@@ -144,10 +144,11 @@ public class StatementParser {
           predicate, StatementParser.predicateValidationPattern.pattern()));
     }
     matcher = StatementParser.predicateExtractorPattern.matcher(predicate);
-    var index = 0;
+    var first = true;
     while (matcher.find()) {
       for (var groupName : EXPRESSION_BLOCKS) {
-        if (index == 0 && groupName == "connector") {
+        if (first && groupName == "connector") {
+          first = false;
           continue;
         }
         var token = matcher.group(groupName);
@@ -158,7 +159,6 @@ public class StatementParser {
         }
         builder.withPredicateToken(token);
       }
-      index++;
     }
   }
 }
