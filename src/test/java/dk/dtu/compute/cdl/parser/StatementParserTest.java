@@ -59,7 +59,9 @@ public class StatementParserTest {
 
   private static Stream<Arguments> provideStringsForPredicateParsing() {
     return Stream.of(Arguments.of("a.name IS 'NoOp' AND a.time IS LESS THAN 10", 2),
-        Arguments.of("action.dest IS other.origin", 1));
+        Arguments.of("action.dest IS other.origin", 1), Arguments.of("a.dest IS b.dest", 1),
+        Arguments.of("a.name IS NOT 'NoOp' AND NOT a.time IS MORE THAN 5 AND a.time IS MORE THAN 1",
+            3));
   }
 
   private static Stream<Arguments> provideStringsForInitialParsing() {
