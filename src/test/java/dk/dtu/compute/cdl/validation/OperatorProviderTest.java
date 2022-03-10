@@ -16,10 +16,8 @@ public class OperatorProviderTest {
       throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     // arrange
     var sut = new OperatorProvider();
-    // var method = sut.tryGet(operator, arg1, arg2);
 
     // act
-    // var actual = method.invoke(sut, arg1, arg2);
     var actual = sut.evaluate(operator, arg1, arg2);
 
     // assert
@@ -27,6 +25,11 @@ public class OperatorProviderTest {
   }
 
   private static Stream<Arguments> provideArgsForEvaluateTest() {
-    return Stream.of(Arguments.of("IS", (Integer) 4, (Integer) 5, false));
+    return Stream.of(Arguments.of("IS", (Integer) 4, (Integer) 5, false),
+        Arguments.of("IS", (Integer) 8, (Integer) 8, true),
+        Arguments.of("IS NOT", (Integer) 9, (Integer) 9, false),
+        Arguments.of("IS", "NoOp", "Push(E,E)", false), Arguments.of("IS", "NoOp", "NoOp", true),
+        Arguments.of("IS NOT", "NoOp", "NoOp", false),
+        Arguments.of("IS NOT", "NoOp", "Move(E)", true));
   }
 }
