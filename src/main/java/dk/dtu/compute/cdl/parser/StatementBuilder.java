@@ -35,7 +35,7 @@ public class StatementBuilder {
     OPERAND1, OPERATOR, OPERAND2, CONNECTOR,
   }
 
-  private final Pattern actionReferencePattern = Pattern.compile("^(?<context>[a-z]+)\\.[a-z]+&");
+  private final Pattern actionReferencePattern = Pattern.compile("^(?<context>[a-z]+)\\.[a-z]+$");
   private final static Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
   private final static Map<Operator, Set<OperandValueType>> OPERATOR_ARGS_MAP = Map.ofEntries(
       new SimpleEntry<>(Operator.IS,
@@ -89,7 +89,8 @@ public class StatementBuilder {
    * @throws IllegalStateException
    */
   protected void validate() throws IllegalStateException {
-    if (predicateStateMachine != PredicateParsingState.OPERAND1) {
+    if (!(predicateStateMachine == PredicateParsingState.OPERAND1
+        || predicateStateMachine == PredicateParsingState.CONNECTOR)) {
       throw new IllegalStateException("Incomplete predicate");
     }
     var contexKeys = this.contextMap.keySet();
@@ -106,6 +107,7 @@ public class StatementBuilder {
       if (expression.operand1.type == OperandType.ActionReference) {
         var value = (String) expression.operand1.value;
         var matcher = actionReferencePattern.matcher(value);
+        matcher.find();
         var contextEntry = matcher.group("context");
         if (!contextMap.values().contains(contextEntry)) {
           throw new IllegalStateException(

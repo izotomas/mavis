@@ -22,7 +22,8 @@ import java.util.regex.Pattern;
 public class StatementParser {
 
   private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
-  private final String[] EXPRESSION_BLOCKS = {"connector", "operand1", "operator", "operand2"};
+  private final String[] EXPRESSION_BLOCKS =
+      new String[] {"connector", "operand1", "operator", "operand2"};
 
 
   public StatementBuilder builder;
