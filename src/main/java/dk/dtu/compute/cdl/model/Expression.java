@@ -18,6 +18,7 @@ package dk.dtu.compute.cdl.model;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.function.Predicate;
+import dk.dtu.compute.cdl.errors.PredicateExecutionFailedException;
 import dk.dtu.compute.cdl.validation.OperatorProvider;
 
 public final class Expression implements Iterator<Expression> {
@@ -26,15 +27,11 @@ public final class Expression implements Iterator<Expression> {
   public Operand operand2;
   public String connector;
 
-  private Expression parent;
   private Expression next;
 
-  public Expression() {
-    parent = null;
-  }
+  public Expression() {}
 
   public Expression(Expression parent) {
-    this.parent = parent;
     parent.next = this;
   }
 

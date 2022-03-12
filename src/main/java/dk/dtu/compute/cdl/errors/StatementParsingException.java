@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.model;
+package dk.dtu.compute.cdl.errors;
 
-class PredicateExecutionFailedException extends RuntimeException {
-  public PredicateExecutionFailedException(String message) {
+public class StatementParsingException extends Exception {
+  public StatementParsingException(String message) {
     super(message);
   }
 }

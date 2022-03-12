@@ -18,6 +18,7 @@ package dk.dtu.compute.cdl.parser;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
+import dk.dtu.compute.cdl.errors.StatementParsingException;
 
 public class StatementParser {
 
