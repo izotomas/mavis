@@ -15,9 +15,9 @@ public class StatementBuilderTest {
   @MethodSource("provideValidConstraintDefinitions")
   public void validationTest(String constraintDefinition) throws StatementParsingException {
     // arrange
-    var sut = PARSER.Parse(constraintDefinition);
-    sut.withRequestingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"));
-    sut.withBlockingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"));
+    var sut = PARSER.Parse(constraintDefinition)
+        .withRequestingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"))
+        .withBlockingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"));
 
     // act
     sut.validate();
