@@ -113,9 +113,11 @@ public class ConstraintBuilder {
     var contexKeys = this.contextMap.keySet();
     if (contexKeys.size() == 0) {
       throw new IllegalStateException("Missing action context");
-    } else if (contextEntry1 == null) {
+
+    } else if (contextEntry1 == null || this.contextMap.get("entry1") == null) {
       throw new IllegalStateException("Missing requesting action context");
-    } else if (contexKeys.size() == 2 && contextEntry2 == null) {
+    } else if (contexKeys.size() == 2
+        && (contextEntry2 == null || this.contextMap.get("entry2") == null)) {
       throw new IllegalStateException("Missing blocking action context");
     }
 

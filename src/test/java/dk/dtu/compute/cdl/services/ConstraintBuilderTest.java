@@ -27,11 +27,26 @@ public class ConstraintBuilderTest {
 
   @ParameterizedTest
   @MethodSource("provideValidSingleActionArgs")
-  public void buildTest(String constraintDefinition, Action requestingContext,
+  public void buildWithSingleActionTest(String constraintDefinition, Action requestingContext,
       boolean expectedEvaluation) throws StatementParsingException {
     // arrange
     var sut =
         PARSER.Parse(constraintDefinition).withRequestingActionContext(requestingContext).build();
+
+    // act
+    var actual = sut.evaluate();
+
+    // assert
+    assertThat(actual).isEqualTo(expectedEvaluation);
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideValidDoubleActionArgs")
+  public void buildWithDoubleActionTest(String constraintDefinition, Action requesting,
+      Action blocking, boolean expectedEvaluation) throws StatementParsingException {
+    // arrange
+    var sut = PARSER.Parse(constraintDefinition).withRequestingActionContext(requesting)
+        .withBlockingActionContext(blocking).build();
 
     // act
     var actual = sut.evaluate();
@@ -53,5 +68,11 @@ public class ConstraintBuilderTest {
             new Action(null, null, 0, "NoOp"), true),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
             new Action(null, null, 11, "NoOp"), false));
+  }
+
+  private static Stream<Arguments> provideValidDoubleActionArgs() {
+    return Stream.of(Arguments.of("ACTION a IS BLOCKED BY ACTION b IF a.dest IS b.dest",
+        new Action(null, new Pair<>(1, 1), 0, null), new Action(null, new Pair<>(1, 1), 0, null),
+        true));
   }
 }
