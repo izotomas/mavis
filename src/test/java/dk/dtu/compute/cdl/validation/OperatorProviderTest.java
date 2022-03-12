@@ -27,12 +27,8 @@ public class OperatorProviderTest {
 
   private static Stream<Arguments> provideArgsForEvaluateTest() {
     return Stream.of(
-        Arguments.of("OVERLAPS WITH",
-            new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(
-                new Pair<Integer, Integer>(1, 1), new Pair<Integer, Integer>(1, 2)),
-            new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(
-                new Pair<Integer, Integer>(1, 1), new Pair<Integer, Integer>(1, 2)),
-            true),
+        Arguments.of("OVERLAPS WITH", new Pair<>(new Pair<>(1, 1), new Pair<>(1, 2)),
+            new Pair<>(new Pair<>(1, 1), new Pair<>(1, 2)), true),
         Arguments.of("IS", (Integer) 4, (Integer) 5, false),
         Arguments.of("IS", (Integer) 8, (Integer) 8, true),
         Arguments.of("IS NOT", (Integer) 9, (Integer) 9, false),

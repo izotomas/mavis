@@ -18,10 +18,16 @@ package dk.dtu.compute.cdl.parser;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.model.Action;
 import dk.dtu.compute.cdl.model.Expression;
+import dk.dtu.compute.cdl.model.Operand;
+import dk.dtu.compute.cdl.model.OperandType;
+import dk.dtu.compute.cdl.model.OperandValueType;
+import dk.dtu.compute.cdl.model.Operator;
 
 public class StatementBuilder {
 
@@ -29,7 +35,15 @@ public class StatementBuilder {
     OPERAND1, OPERATOR, OPERAND2, CONNECTOR,
   }
 
-  private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
+  private final Pattern actionReferencePattern = Pattern.compile("^(?<context>[a-z]+)\\.[a-z]+&");
+  private final static Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
+  private final static Map<Operator, Set<OperandValueType>> OPERATOR_ARGS_MAP = Map.ofEntries(
+      new SimpleEntry<>(Operator.IS,
+          Set.of(OperandValueType.Number, OperandValueType.String, OperandValueType.Vertex)),
+      new SimpleEntry<>(Operator.LESS, Set.of(OperandValueType.Number)),
+      new SimpleEntry<>(Operator.MORE, Set.of(OperandValueType.Number)),
+      new SimpleEntry<>(Operator.OVERLAPS, Set.of(OperandValueType.Edge)));
+
   private PredicateParsingState predicateStateMachine;
   private Expression currentExpression;
 
@@ -48,12 +62,12 @@ public class StatementBuilder {
     this.expressionList.add(currentExpression);
   }
 
-  public void Build() {
-    // validate
+  public void Build() throws IllegalStateException {
+    validate();
 
   }
 
-  public StatementBuilder withPrimaryActionContext(Action action) {
+  public StatementBuilder withRequestingActionContext(Action action) {
     if (action == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
@@ -61,12 +75,44 @@ public class StatementBuilder {
     return this;
   }
 
-  public StatementBuilder withSecondaryActionContext(Action action) {
+  public StatementBuilder withBlockingActionContext(Action action) {
     if (action == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
     this.contextEntry2 = action;
     return this;
+  }
+
+  /**
+   * Validates context related properties
+   * 
+   * @throws IllegalStateException
+   */
+  protected void validate() throws IllegalStateException {
+    if (predicateStateMachine != PredicateParsingState.OPERAND1) {
+      throw new IllegalStateException("Incomplete predicate");
+    }
+    var contexKeys = this.contextMap.keySet();
+    if (contexKeys.size() == 0) {
+      throw new IllegalStateException("Missing action context");
+    } else if (contextEntry1 == null) {
+      throw new IllegalStateException("Missing requesting action context");
+    } else if (contexKeys.size() == 2 && contextEntry2 == null) {
+      throw new IllegalStateException("Missing blocking action context");
+    }
+
+    // contextual variables
+    for (var expression : expressionList) {
+      if (expression.operand1.type == OperandType.ActionReference) {
+        var value = (String) expression.operand1.value;
+        var matcher = actionReferencePattern.matcher(value);
+        var contextEntry = matcher.group("context");
+        if (!contextMap.values().contains(contextEntry)) {
+          throw new IllegalStateException(
+              String.format("Missing required action context entry: %s", contextEntry));
+        }
+      }
+    }
   }
 
   protected StatementBuilder withContextMapping(SimpleEntry<String, String> entry)
@@ -91,16 +137,38 @@ public class StatementBuilder {
     }
     switch (predicateStateMachine) {
       case OPERAND1:
-        currentExpression.operand1 = token;
+        currentExpression.operand1 = new Operand(token);
         predicateStateMachine = PredicateParsingState.OPERATOR;
         break;
       case OPERATOR:
-        currentExpression.operator = token;
+        currentExpression.operator = Operator.fromString(token);
+
+        if (!OPERATOR_ARGS_MAP.get(currentExpression.operator)
+            .contains(currentExpression.operand1.valueType)) {
+          throw new IllegalArgumentException(
+              String.format("Operator %s does not support operand1 of type: %s", token,
+                  currentExpression.operand1.valueType));
+        }
+
         predicateStateMachine = PredicateParsingState.OPERAND2;
         break;
       case OPERAND2:
-        currentExpression.operand2 = token;
+        currentExpression.operand2 = new Operand(token);
         predicateStateMachine = PredicateParsingState.CONNECTOR;
+
+        if (!OPERATOR_ARGS_MAP.get(currentExpression.operator)
+            .contains(currentExpression.operand2.valueType)) {
+          throw new IllegalArgumentException(
+              String.format("Operator %s does not support operand2 of type: %s", token,
+                  currentExpression.operand1.valueType));
+        }
+
+        if (currentExpression.operand1.valueType != currentExpression.operand2.valueType) {
+          throw new IllegalArgumentException(
+              String.format("Operands are of incompatible type.\n\tOperand1: %s.\n\tOperand2: %s",
+                  currentExpression.operand1.valueType, currentExpression.operand2.valueType));
+        }
+
         break;
       case CONNECTOR:
         currentExpression.connector = token;

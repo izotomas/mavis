@@ -20,27 +20,28 @@ import org.javatuples.*;
 
 
 public class OperatorProvider {
-  public boolean is(Integer one, Integer other) {
+
+  public static boolean is(Integer one, Integer other) {
     return one == other;
   }
 
-  public boolean is(String one, String other) {
+  public static boolean is(String one, String other) {
     return one.equals(other);
   }
 
-  public boolean is(Pair<Integer, Integer> one, Pair<Integer, Integer> other) {
+  public static boolean is(Pair<Integer, Integer> one, Pair<Integer, Integer> other) {
     return one.equals(other);
   }
 
-  public boolean less(Integer one, Integer other) {
+  public static boolean less(Integer one, Integer other) {
     return one < other;
   }
 
-  public boolean more(Integer one, Integer other) {
+  public static boolean more(Integer one, Integer other) {
     return one > other;
   }
 
-  public boolean overlaps(Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> one,
+  public static boolean overlaps(Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> one,
       Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> other) {
     return is(one.getValue0(), other.getValue0()) || is(one.getValue1(), other.getValue0())
         || is(one.getValue0(), other.getValue1()) || is(one.getValue1(), other.getValue1());
@@ -84,11 +85,12 @@ public class OperatorProvider {
   private boolean evaluate(Method operatorMethod, Object arg1, Object arg2)
       throws IllegalArgumentException {
     try {
-      return (boolean) operatorMethod.invoke(this, arg1, arg2);
+      return (boolean) operatorMethod.invoke(null, arg1, arg2);
     } catch (Exception e) {
       throw new IllegalArgumentException(e.getMessage());
     }
   }
+
 
   private Method getMethod(String operator, Object arg1, Object arg2)
       throws IllegalArgumentException {

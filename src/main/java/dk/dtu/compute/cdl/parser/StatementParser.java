@@ -22,8 +22,7 @@ import java.util.regex.Pattern;
 public class StatementParser {
 
   private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
-  private final Set<String> EXPRESSION_BLOCKS =
-      Set.of("connector", "operand1", "operator", "operand2");
+  private final String[] EXPRESSION_BLOCKS = {"connector", "operand1", "operator", "operand2"};
 
 
   public StatementBuilder builder;
@@ -60,11 +59,11 @@ public class StatementParser {
           // predicate connector
           + "(?:\\h(?:(?:AND|OR)(?:\\hNOT)?)\\h|^)"
           // operand1
-          + "(?:[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
+          + "(?:[a-z]+\\.[a-z]+|\\'[\\w\\h().,*]+\\'|[0-9]+)"
           // operator
           + "\\h(?:[A-Z]+(?:\\h[A-Z]+)*)\\h"
           // operand2
-          + "(?:[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
+          + "(?:[a-z]+\\.[a-z]+|\\'[\\w\\h().,*]+\\'|[0-9]+)"
           // repeat until end
           + ")+$");
 
@@ -72,9 +71,10 @@ public class StatementParser {
       // predicate connector
       "(?:\\h(?<connector>(?:AND|OR)(?:\\hNOT)?)\\h|^)"
           // predicate operands and operator
-          + "(?<operand1>[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)"
+          + "(?<operand1>[a-z]+\\.[a-z]+|\\'[\\w\\h().,*]+\\'|[0-9]+)"
           + "\\h(?<operator>[A-Z]+(?:\\h[A-Z]+)*)\\h"
-          + "(?<operand2>[a-z]+\\.[a-z]+|\\'[\\w().,*]+\\'|[0-9]+)");
+          + "(?<operand2>[a-z]+\\.[a-z]+|\\'[\\w()\\h.,*]+\\'|[0-9]+)");
+
 
 
   public StatementParser() {

@@ -15,9 +15,26 @@
  */
 package dk.dtu.compute.cdl.model;
 
-public final class Expression {
-  public Operand operand1;
-  public Operator operator;
-  public Operand operand2;
-  public String connector;
+
+public enum Operator {
+  IS, LESS, MORE, OVERLAPS;
+
+  public static Operator fromString(String operatorString) {
+    switch (operatorString) {
+      case "IS":
+      case "IS NOT":
+        return Operator.IS;
+      case "IS LESS THAN":
+      case "IS NOT LESS THAN":
+        return Operator.LESS;
+      case "IS MORE THAN":
+      case "IS NOT MORE THAN":
+        return Operator.MORE;
+      case "OVERLAPS WITH":
+      case "NOT OVERLAPS WITH":
+        return Operator.OVERLAPS;
+      default:
+        throw new IllegalArgumentException(String.format("Unknown operator: '%s'", operatorString));
+    }
+  }
 }
