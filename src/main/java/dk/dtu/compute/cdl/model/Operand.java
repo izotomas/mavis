@@ -17,6 +17,7 @@ package dk.dtu.compute.cdl.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import dk.dtu.compute.cdl.enums.OperandType;
 
 
 

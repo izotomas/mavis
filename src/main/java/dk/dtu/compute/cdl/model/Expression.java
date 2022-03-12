@@ -18,6 +18,7 @@ package dk.dtu.compute.cdl.model;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.function.Predicate;
+import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.errors.PredicateExecutionFailedException;
 import dk.dtu.compute.cdl.validation.OperatorProvider;
 
