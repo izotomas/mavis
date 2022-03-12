@@ -56,7 +56,24 @@ public class OperatorProvider {
       case "IS NOT":
         operator = getMethod("is", arg1, arg2);
         return !evaluate(operator, arg1, arg2);
-
+      case "IS LESS THAN":
+        operator = getMethod("less", arg1, arg2);
+        return evaluate(operator, arg1, arg2);
+      case "IS NOT LESS THAN":
+        operator = getMethod("less", arg1, arg2);
+        return !evaluate(operator, arg1, arg2);
+      case "IS MORE THAN":
+        operator = getMethod("more", arg1, arg2);
+        return evaluate(operator, arg1, arg2);
+      case "IS NOT MORE THAN":
+        operator = getMethod("more", arg1, arg2);
+        return !evaluate(operator, arg1, arg2);
+      case "OVERLAPS WITH":
+        operator = getMethod("overlaps", arg1, arg2);
+        return evaluate(operator, arg1, arg2);
+      case "NOT OVERLAPS WITH":
+        operator = getMethod("overlaps", arg1, arg2);
+        return !evaluate(operator, arg1, arg2);
       default:
         throw new IllegalArgumentException(
             String.format("Undefined function: '%s'\n\tArg1Class: %s\n\tArg2Class: %s",
@@ -64,7 +81,7 @@ public class OperatorProvider {
     }
   }
 
-  protected boolean evaluate(Method operatorMethod, Object arg1, Object arg2)
+  private boolean evaluate(Method operatorMethod, Object arg1, Object arg2)
       throws IllegalArgumentException {
     try {
       return (boolean) operatorMethod.invoke(this, arg1, arg2);
