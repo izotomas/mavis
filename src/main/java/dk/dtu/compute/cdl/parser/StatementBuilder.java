@@ -23,13 +23,13 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.enums.OperandValueType;
+import dk.dtu.compute.cdl.enums.OperatorType;
 import dk.dtu.compute.cdl.model.Action;
 import dk.dtu.compute.cdl.model.ActionContext;
 import dk.dtu.compute.cdl.model.Constraint;
 import dk.dtu.compute.cdl.model.Expression;
 import dk.dtu.compute.cdl.model.Operand;
 import dk.dtu.compute.cdl.model.Operator;
-import dk.dtu.compute.cdl.model.OperatorType;
 
 public class StatementBuilder {
 

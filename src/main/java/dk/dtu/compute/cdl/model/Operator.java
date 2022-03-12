@@ -15,6 +15,8 @@
  */
 package dk.dtu.compute.cdl.model;
 
+import dk.dtu.compute.cdl.enums.OperatorType;
+
 public class Operator {
   public final OperatorType type;
   public final boolean negated;
