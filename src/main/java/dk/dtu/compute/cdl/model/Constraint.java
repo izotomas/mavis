@@ -15,12 +15,18 @@
  */
 package dk.dtu.compute.cdl.model;
 
-public class Operator {
-  public final OperatorType type;
-  public final boolean negated;
+import java.util.function.Predicate;
 
-  public Operator(String operatorString) {
-    this.type = OperatorType.fromString(operatorString);
-    this.negated = operatorString.contains("NOT");
+public class Constraint {
+  public final ActionContext context;
+  public final Predicate<ActionContext> predicate;
+
+  public Constraint(ActionContext context, Predicate<ActionContext> predicate) {
+    this.context = context;
+    this.predicate = predicate;
+  }
+
+  public boolean evaluate() {
+    return this.predicate.test(this.context);
   }
 }

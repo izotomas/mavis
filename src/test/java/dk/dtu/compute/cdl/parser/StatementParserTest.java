@@ -51,10 +51,16 @@ public class StatementParserTest {
 
     // act
     sut.ParsePredicate(predicate);
-    var actual = sut.builder.expressionList;
+    var actual = 1;
+    var curr = sut.builder.expression;
+    while (curr.hasNext()) {
+      actual++;
+      curr = curr.next();
+    }
+
 
     // assert
-    assertThat(actual.size()).isEqualTo(expectedExpressionCount);
+    assertThat(actual).isEqualTo(expectedExpressionCount);
   }
 
   private static Stream<Arguments> provideStringsForPredicateParsing() {

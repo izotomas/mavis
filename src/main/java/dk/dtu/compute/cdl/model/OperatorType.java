@@ -15,12 +15,26 @@
  */
 package dk.dtu.compute.cdl.model;
 
-public class Operator {
-  public final OperatorType type;
-  public final boolean negated;
 
-  public Operator(String operatorString) {
-    this.type = OperatorType.fromString(operatorString);
-    this.negated = operatorString.contains("NOT");
+public enum OperatorType {
+  IS, LESS, MORE, OVERLAPS;
+
+  public static OperatorType fromString(String operatorString) {
+    switch (operatorString) {
+      case "IS":
+      case "IS NOT":
+        return OperatorType.IS;
+      case "IS LESS THAN":
+      case "IS NOT LESS THAN":
+        return OperatorType.LESS;
+      case "IS MORE THAN":
+      case "IS NOT MORE THAN":
+        return OperatorType.MORE;
+      case "OVERLAPS WITH":
+      case "NOT OVERLAPS WITH":
+        return OperatorType.OVERLAPS;
+      default:
+        throw new IllegalArgumentException(String.format("Unknown operator: '%s'", operatorString));
+    }
   }
 }

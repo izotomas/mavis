@@ -15,12 +15,8 @@
  */
 package dk.dtu.compute.cdl.model;
 
-public class Operator {
-  public final OperatorType type;
-  public final boolean negated;
-
-  public Operator(String operatorString) {
-    this.type = OperatorType.fromString(operatorString);
-    this.negated = operatorString.contains("NOT");
+class PredicateExecutionFailedException extends RuntimeException {
+  public PredicateExecutionFailedException(String message) {
+    super(message);
   }
 }

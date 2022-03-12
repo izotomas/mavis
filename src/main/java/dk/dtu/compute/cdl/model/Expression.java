@@ -15,9 +15,53 @@
  */
 package dk.dtu.compute.cdl.model;
 
-public final class Expression {
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.function.Predicate;
+import dk.dtu.compute.cdl.validation.OperatorProvider;
+
+public final class Expression implements Iterator<Expression> {
   public Operand operand1;
   public Operator operator;
   public Operand operand2;
   public String connector;
+
+  private Expression parent;
+  private Expression next;
+
+  public Expression() {
+    parent = null;
+  }
+
+  public Expression(Expression parent) {
+    this.parent = parent;
+    parent.next = this;
+  }
+
+  public boolean hasNext() {
+    return next != null;
+  }
+
+  public Expression next() {
+    return next;
+  }
+
+  public Predicate<ActionContext> toPredicate() {
+    return context -> {
+      try {
+        var arg1 = operand1.type == OperandType.Literal ? operand1.value
+            : context.get((String) operand1.value);
+        var arg2 = operand2.type == OperandType.Literal ? operand2.value
+            : context.get((String) operand2.value);
+        var methodName = operator.type.toString().toLowerCase();
+        var method = OperatorProvider.class.getMethod(methodName, arg1.getClass(), arg2.getClass());
+
+        return operator.negated ? (!(boolean) method.invoke(null, arg1, arg2))
+            : (boolean) method.invoke(null, arg1, arg2);
+      } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException
+          | InvocationTargetException e1) {
+        throw new PredicateExecutionFailedException(e1.getMessage());
+      }
+    };
+  }
 }

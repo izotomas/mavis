@@ -1,5 +1,6 @@
 package dk.dtu.compute.cdl.parser;
 
+import static org.assertj.core.api.Assertions.*;
 import java.util.stream.Stream;
 import org.javatuples.Pair;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,9 +24,33 @@ public class StatementBuilderTest {
     sut.validate();
   }
 
+  @ParameterizedTest
+  @MethodSource("provideValidSingleActionArgs")
+  public void buildTest(String constraintDefinition, Action requestingContext,
+      boolean expectedEvaluation) throws StatementParsingException {
+    // arrange
+    var sut =
+        PARSER.Parse(constraintDefinition).withRequestingActionContext(requestingContext).build();
+
+    // act
+    var actual = sut.evaluate();
+
+    // assert
+    assertThat(actual).isEqualTo(expectedEvaluation);
+  }
+
+
   private static Stream<Arguments> provideValidConstraintDefinitions() {
     return Stream.of(
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10"),
         Arguments.of("ACTION action IS BLOCKED BY ACTION other IF action.dest IS other.origin"));
+  }
+
+  private static Stream<Arguments> provideValidSingleActionArgs() {
+    return Stream.of(
+        Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
+            new Action(null, null, 0, "NoOp"), true),
+        Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
+            new Action(null, null, 11, "NoOp"), false));
   }
 }
