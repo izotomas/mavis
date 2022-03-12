@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import dk.dtu.compute.cdl.enums.OperandType;
+import dk.dtu.compute.cdl.enums.OperandValueType;
 
 public class OperandTest {
 

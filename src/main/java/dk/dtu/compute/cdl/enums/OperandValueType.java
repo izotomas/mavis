@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.model;
+package dk.dtu.compute.cdl.enums;
 
 public enum OperandValueType {
   Edge, Vertex, Number, String
