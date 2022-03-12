@@ -1,4 +1,4 @@
-package dk.dtu.compute.cdl.parser;
+package dk.dtu.compute.cdl.services;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.stream.Stream;
@@ -6,15 +6,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
+import dk.dtu.compute.cdl.services.ConstraintParser;
 
-public class StatementParserTest {
+public class ConstraintParserTest {
 
   @ParameterizedTest
   @MethodSource("provideStringsForInitialParsing")
   public void initialParsingTest(String constraintDefinition, String expectedContext,
       String expectedPredicate) throws StatementParsingException {
     // arrange
-    var sut = new StatementParser();
+    var sut = new ConstraintParser();
 
     // act
     sut.ParseInitial(constraintDefinition);
@@ -31,7 +32,7 @@ public class StatementParserTest {
   public void contextMappingTest(String context, String expectedEntry1, String expectedEntry2)
       throws StatementParsingException {
     // arrange
-    var sut = new StatementParser();
+    var sut = new ConstraintParser();
 
     // act
     sut.ParseContext(context);
@@ -48,7 +49,7 @@ public class StatementParserTest {
   public void predicateParsingTest(String predicate, int expectedExpressionCount)
       throws StatementParsingException {
     // arrange
-    var sut = new StatementParser();
+    var sut = new ConstraintParser();
 
     // act
     sut.ParsePredicate(predicate);

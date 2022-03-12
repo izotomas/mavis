@@ -13,21 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.parser;
+package dk.dtu.compute.cdl.services;
 
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
 
-public class StatementParser {
+public class ConstraintParser {
 
   private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
   private final String[] EXPRESSION_BLOCKS =
       new String[] {"connector", "operand1", "operator", "operand2"};
 
 
-  public StatementBuilder builder;
+  public ConstraintBuilder builder;
   public String contextString;
   public String predicateString;
 
@@ -79,12 +79,12 @@ public class StatementParser {
 
 
 
-  public StatementParser() {
-    this.builder = new StatementBuilder();
+  public ConstraintParser() {
+    this.builder = new ConstraintBuilder();
   }
 
-  public StatementBuilder Parse(String constraintDefinition) throws StatementParsingException {
-    this.builder = new StatementBuilder();
+  public ConstraintBuilder Parse(String constraintDefinition) throws StatementParsingException {
+    this.builder = new ConstraintBuilder();
     this.contextString = null;
     this.predicateString = null;
     try {
@@ -104,12 +104,12 @@ public class StatementParser {
    * @throws StatementParsingException
    */
   protected void ParseInitial(String constraintDefinition) throws StatementParsingException {
-    var matcher = StatementParser.constraintPattern.matcher(constraintDefinition);
+    var matcher = ConstraintParser.constraintPattern.matcher(constraintDefinition);
     if (!matcher.matches() || matcher.group("context") == null
         || matcher.group("predicate") == null) {
       throw new StatementParsingException(String.format(
           "Constraint definition does not match the required pattern.\n\tStatement: %s\n\tPattern: %s",
-          constraintDefinition, StatementParser.constraintPattern.pattern()));
+          constraintDefinition, ConstraintParser.constraintPattern.pattern()));
     }
 
     contextString = matcher.group("context");
@@ -123,11 +123,11 @@ public class StatementParser {
    * @throws StatementParsingException
    */
   protected void ParseContext(String context) throws StatementParsingException {
-    var matcher = StatementParser.contextPattern.matcher(context);
+    var matcher = ConstraintParser.contextPattern.matcher(context);
     if (!matcher.matches()) {
       throw new StatementParsingException(String.format(
           "Context definition does not match the required pattern.\n\tStatement: %s\n\tPattern: %s",
-          context, StatementParser.contextPattern.pattern()));
+          context, ConstraintParser.contextPattern.pattern()));
     }
     for (var groupName : ALLOWED_CONTEXT_KEYS) {
       var value = matcher.group(groupName);
@@ -138,13 +138,13 @@ public class StatementParser {
   }
 
   protected void ParsePredicate(String predicate) throws StatementParsingException {
-    var matcher = StatementParser.predicateValidationPattern.matcher(predicate);
+    var matcher = ConstraintParser.predicateValidationPattern.matcher(predicate);
     if (!matcher.matches()) {
       throw new StatementParsingException(String.format(
           "Predicate definition does not match the required pattern.\n\tPredicate: %s\n\tPattern: %s",
-          predicate, StatementParser.predicateValidationPattern.pattern()));
+          predicate, ConstraintParser.predicateValidationPattern.pattern()));
     }
-    matcher = StatementParser.predicateExtractorPattern.matcher(predicate);
+    matcher = ConstraintParser.predicateExtractorPattern.matcher(predicate);
     var first = true;
     while (matcher.find()) {
       for (var groupName : EXPRESSION_BLOCKS) {
@@ -156,7 +156,7 @@ public class StatementParser {
         if (token == null) {
           throw new StatementParsingException(
               String.format("Missing or invalid %s.\n\tPredicate: %s\n\tPattern: %s", groupName,
-                  predicate, StatementParser.predicateExtractorPattern.pattern()));
+                  predicate, ConstraintParser.predicateExtractorPattern.pattern()));
         }
         builder.withPredicateToken(token);
       }

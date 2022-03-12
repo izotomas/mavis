@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.errors.PredicateExecutionFailedException;
-import dk.dtu.compute.cdl.validation.OperatorProvider;
+import dk.dtu.compute.cdl.services.OperatorProvider;
 
 public final class Expression implements Iterator<Expression> {
   public Operand operand1;

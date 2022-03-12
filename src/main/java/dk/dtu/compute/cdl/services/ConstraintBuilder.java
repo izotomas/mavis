@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.parser;
+package dk.dtu.compute.cdl.services;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import dk.dtu.compute.cdl.model.Expression;
 import dk.dtu.compute.cdl.model.Operand;
 import dk.dtu.compute.cdl.model.Operator;
 
-public class StatementBuilder {
+public class ConstraintBuilder {
 
   private enum PredicateParsingState {
     OPERAND1, OPERATOR, OPERAND2, CONNECTOR,
@@ -55,7 +55,7 @@ public class StatementBuilder {
   protected Action contextEntry1;
   protected Action contextEntry2;
 
-  public StatementBuilder() {
+  public ConstraintBuilder() {
     this.predicateStateMachine = PredicateParsingState.OPERAND1;
     this.expression = new Expression();
     this.contextMap = new HashMap<>();
@@ -84,7 +84,7 @@ public class StatementBuilder {
     return new Constraint(context, predicate);
   }
 
-  public StatementBuilder withRequestingActionContext(Action action) {
+  public ConstraintBuilder withRequestingActionContext(Action action) {
     if (action == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
@@ -92,7 +92,7 @@ public class StatementBuilder {
     return this;
   }
 
-  public StatementBuilder withBlockingActionContext(Action action) {
+  public ConstraintBuilder withBlockingActionContext(Action action) {
     if (action == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
@@ -136,7 +136,7 @@ public class StatementBuilder {
     }
   }
 
-  protected StatementBuilder withContextMapping(SimpleEntry<String, String> entry)
+  protected ConstraintBuilder withContextMapping(SimpleEntry<String, String> entry)
       throws IllegalArgumentException {
     var key = entry.getKey();
     var val = entry.getValue();
@@ -152,7 +152,7 @@ public class StatementBuilder {
     return this;
   }
 
-  protected StatementBuilder withPredicateToken(String token) throws IllegalArgumentException {
+  protected ConstraintBuilder withPredicateToken(String token) throws IllegalArgumentException {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("Predicate token may not be null or empty.");
     }

@@ -1,4 +1,4 @@
-package dk.dtu.compute.cdl.parser;
+package dk.dtu.compute.cdl.services;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.stream.Stream;
@@ -9,9 +9,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
 import dk.dtu.compute.cdl.model.Action;
 
-public class StatementBuilderTest {
+public class ConstraintBuilderTest {
 
-  final static StatementParser PARSER = new StatementParser();
+  final static ConstraintParser PARSER = new ConstraintParser();
 
   @ParameterizedTest
   @MethodSource("provideValidConstraintDefinitions")
