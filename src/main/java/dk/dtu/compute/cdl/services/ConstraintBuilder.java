@@ -123,18 +123,25 @@ public class ConstraintBuilder {
 
     // contextual variables
     var curr = expression;
-    while (curr.hasNext()) {
-      if (curr.operand1.type == OperandType.ActionReference) {
-        var value = (String) curr.operand1.value;
-        var matcher = actionReferencePattern.matcher(value);
-        matcher.find();
-        var contextEntry = matcher.group("context");
-        if (!contextMap.values().contains(contextEntry)) {
-          throw new IllegalStateException(
-              String.format("Missing required action context entry: %s", contextEntry));
-        }
-      }
+    while (curr != null) {
+      validate(curr.operand1);
+      validate(curr.operand2);
       curr = curr.next();
+    }
+  }
+
+  private void validate(Operand operand) throws IllegalStateException {
+    if (operand.type != OperandType.ActionReference) {
+      return;
+    }
+
+    var value = (String) operand.value;
+    var matcher = actionReferencePattern.matcher(value);
+    matcher.find();
+    var contextEntry = matcher.group("context");
+    if (!contextMap.values().contains(contextEntry)) {
+      throw new IllegalStateException(
+          String.format("Missing required action context entry: %s", contextEntry));
     }
   }
 
