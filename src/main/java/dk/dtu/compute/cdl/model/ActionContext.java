@@ -15,32 +15,41 @@
  */
 package dk.dtu.compute.cdl.model;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import org.javatuples.Pair;
 
-public class ActionContext implements ValidationContext {
-  private final Action action;
 
-  public ActionContext(Action action) {
-    this.action = action;
+public class ActionContext implements ValidationContext {
+
+  private final HashMap<String, Object> map;
+
+  public ActionContext() {
+    this.map = new HashMap<>();
+  }
+
+  public ActionContext mapContext(SimpleEntry<String, Action> entry) {
+    var actionRef = entry.getKey();
+    var action = entry.getValue();
+
+    this.map.put(actionRef, action);
+    this.map.put(String.format("%s.dest", actionRef), action.destination);
+    this.map.put(String.format("%s.destination", actionRef), action.destination);
+    this.map.put(String.format("%s.orig", actionRef), action.origin);
+    this.map.put(String.format("%s.origin", actionRef), action.origin);
+    this.map.put(String.format("%s.time", actionRef), action.time);
+    this.map.put(String.format("%s.name", actionRef), action.name);
+    this.map.put(String.format("%s.edge", actionRef),
+        new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(action.origin,
+            action.destination));
+
+    return this;
   }
 
   public Object get(String key) {
-    switch (key) {
-      case "dest":
-      case "destination":
-        return this.action.destination;
-      case "orig":
-      case "origin":
-        return this.action.origin;
-      case "time":
-        return this.action.time;
-      case "name":
-        return this.action.name;
-      case "edge":
-        return new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(this.action.origin,
-            this.action.destination);
-      default:
-        throw new IllegalArgumentException();
+    if (this.map.containsKey(key)) {
+      return this.map.get(key);
     }
+    throw new IllegalArgumentException();
   }
 }

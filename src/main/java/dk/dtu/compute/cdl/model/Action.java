@@ -20,7 +20,7 @@ import org.javatuples.*;
 public class Action {
   public final Pair<Integer, Integer> origin;
   public final Pair<Integer, Integer> destination;
-  public final int time;
+  public final Integer time;
   public final String name;
 
   public Action(Pair<Integer, Integer> origin, Pair<Integer, Integer> destination, int time,
