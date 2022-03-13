@@ -20,17 +20,16 @@ import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.enums.OperandValueType;
 
-
-
 public class Operand {
   private final static Pattern numberPattern = Pattern.compile("^\\d+$");
   private final static Pattern stringPattern = Pattern.compile("^\\'(?<value>[\\w\\h().,*]+)\\'$");
   private final static Pattern actionPropPattern = Pattern.compile(
       "^(?<actionkey>[a-z]+)\\.((?<orig>orig(?:in)?)|(?<dest>dest(?:ination)?)|(?<edge>edge)|(?<time>time)|(?<name>name))$");
 
+  protected final Object value;
+
   public final OperandValueType valueType;
   public final OperandType type;
-  public final Object value;
   public final String actionKey;
 
   public Operand(String valueString) {
@@ -69,5 +68,9 @@ public class Operand {
 
   public boolean compatibleWith(Operand other) {
     return this.valueType == other.valueType;
+  }
+
+  public Object getValue(ValidationContext context) {
+    return this.type == OperandType.Literal ? this.value : context.get((String) this.value);
   }
 }

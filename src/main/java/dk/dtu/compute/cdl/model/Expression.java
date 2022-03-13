@@ -15,12 +15,8 @@
  */
 package dk.dtu.compute.cdl.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.function.Predicate;
-import dk.dtu.compute.cdl.enums.OperandType;
-import dk.dtu.compute.cdl.errors.PredicateExecutionFailedException;
-import dk.dtu.compute.cdl.services.OperatorProvider;
 
 public final class Expression implements Iterator<Expression> {
   public Operand operand1;
@@ -36,6 +32,12 @@ public final class Expression implements Iterator<Expression> {
     parent.next = this;
   }
 
+  protected Expression(Operand operand1, Operator operator, Operand operand2) {
+    this.operand1 = operand1;
+    this.operator = operator;
+    this.operand2 = operand2;
+  }
+
   public boolean hasNext() {
     return next != null;
   }
@@ -45,11 +47,7 @@ public final class Expression implements Iterator<Expression> {
   }
 
   public Predicate<ValidationContext> toPredicate() {
-    return context -> operator.predicate.test(getArg(operand1, context), getArg(operand2, context));
-  }
-
-  private Object getArg(Operand operand, ValidationContext context) {
-    return operand.type == OperandType.Literal ? operand.value
-        : context.get((String) operand.value);
+    return context -> operator.predicate.test(operand1.getValue(context),
+        operand2.getValue(context));
   }
 }
