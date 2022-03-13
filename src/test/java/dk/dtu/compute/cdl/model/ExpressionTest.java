@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.Stream;
 import org.javatuples.Pair;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,6 +20,12 @@ public class ExpressionTest {
   private final static Operand A_NAME = new Operand("a.name");
   private final static Operand A_TIME = new Operand("a.time");
   private final static Operand A_DEST = new Operand("a.dest");
+  private final static Operand B_DEST = new Operand("b.dest");
+
+  private final static Operand LITERAL_0 = new Operand("0");
+  private final static Operand LITERAL_1 = new Operand("1");
+  private final static Operand LITERAL_2 = new Operand("2");
+  private final static Operand LITERAL_PUSH = new Operand("'Push'");
 
   private final static ActionContext CTX_A_TIME_1 =
       new ActionContext(new SimpleEntry<>("a", new Action(null, null, 1, null)));
@@ -28,6 +33,9 @@ public class ExpressionTest {
       new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "Push")));
   private final static ActionContext CTX_A_NOOP =
       new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "NoOp")));
+
+  private final static Action CTX_A_DEST_1_1 = new Action(null, new Pair<>(1, 1), 0, null);
+  private final static Action CTX_A_DEST_1_2 = new Action(null, new Pair<>(1, 2), 0, null);
 
   @ParameterizedTest
   @MethodSource("provideValidSingleExpressionIsArgs")
@@ -44,17 +52,17 @@ public class ExpressionTest {
   }
 
   private static Stream<Arguments> provideValidSingleExpressionIsArgs() {
-    return Stream.of(Arguments.of(A_NAME, IS_STR, new Operand("'Push'"), CTX_A_PUSH, true),
-        Arguments.of(A_NAME, IS_STR, new Operand("'Push'"), CTX_A_NOOP, false),
-        Arguments.of(A_TIME, IS_NUM, new Operand("1"), CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_NUM, new Operand("0"), CTX_A_TIME_1, false),
-        Arguments.of(A_DEST, IS_VTX, new Operand("b.dest"),
-            new ActionContext(new SimpleEntry<>("a", new Action(null, new Pair<>(1, 1), 0, null)),
-                new SimpleEntry<>("b", new Action(null, new Pair<>(1, 1), 0, null))),
+    return Stream.of(Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_PUSH, true),
+        Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_NOOP, false),
+        Arguments.of(A_TIME, IS_NUM, LITERAL_1, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_NUM, LITERAL_0, CTX_A_TIME_1, false),
+        Arguments.of(A_DEST, IS_VTX, B_DEST,
+            new ActionContext(new SimpleEntry<>("a", CTX_A_DEST_1_1),
+                new SimpleEntry<>("b", CTX_A_DEST_1_1)),
             true),
-        Arguments.of(A_DEST, IS_VTX, new Operand("b.dest"),
-            new ActionContext(new SimpleEntry<>("a", new Action(null, new Pair<>(1, 2), 0, null)),
-                new SimpleEntry<>("b", new Action(null, new Pair<>(1, 1), 0, null))),
+        Arguments.of(A_DEST, IS_VTX, B_DEST,
+            new ActionContext(new SimpleEntry<>("a", CTX_A_DEST_1_2),
+                new SimpleEntry<>("b", CTX_A_DEST_1_1)),
             false));
   }
 
@@ -74,11 +82,10 @@ public class ExpressionTest {
 
 
   private static Stream<Arguments> provideValidSingleExpressionLessMoreArgs() {
-    return Stream.of(Arguments.of(A_TIME, IS_LESS, new Operand("1"), CTX_A_TIME_1, false),
-        Arguments.of(A_TIME, IS_LESS, new Operand("1"), CTX_A_TIME_1, false),
-        Arguments.of(A_TIME, IS_LESS, new Operand("2"), CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_MORE, new Operand("0"), CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_MORE, new Operand("1"), CTX_A_TIME_1, false),
-        Arguments.of(A_TIME, IS_MORE, new Operand("2"), CTX_A_TIME_1, false));
+    return Stream.of(Arguments.of(A_TIME, IS_LESS, LITERAL_1, CTX_A_TIME_1, false),
+        Arguments.of(A_TIME, IS_LESS, LITERAL_2, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_MORE, LITERAL_0, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_MORE, LITERAL_1, CTX_A_TIME_1, false),
+        Arguments.of(A_TIME, IS_MORE, LITERAL_2, CTX_A_TIME_1, false));
   }
 }
