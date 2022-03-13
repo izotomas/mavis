@@ -15,14 +15,55 @@
  */
 package dk.dtu.compute.cdl.model;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.function.BiPredicate;
+import org.javatuples.Pair;
+import java.lang.reflect.Method;
+import java.util.Map;
+import dk.dtu.compute.cdl.enums.OperandValueType;
 import dk.dtu.compute.cdl.enums.OperatorType;
+import dk.dtu.compute.cdl.errors.PredicateExecutionFailedException;
+import dk.dtu.compute.cdl.services.OperatorProvider;
 
 public class Operator {
-  public final OperatorType type;
-  public final boolean negated;
 
-  public Operator(String operatorString) {
-    this.type = OperatorType.fromString(operatorString);
-    this.negated = operatorString.contains("NOT");
+  private static final Map<OperandValueType, Class<?>> FUNCTION_MAP =
+      Map.ofEntries(new SimpleEntry<>(OperandValueType.Edge, Pair.class),
+          new SimpleEntry<>(OperandValueType.Vertex, Pair.class),
+          new SimpleEntry<>(OperandValueType.String, String.class),
+          new SimpleEntry<>(OperandValueType.Number, Integer.class));
+
+  private final Method method;
+  public final OperatorType type;
+  public BiPredicate<Object, Object> predicate;
+
+  public Operator(String operatorString, OperandValueType argType) {
+    try {
+      this.type = OperatorType.fromString(operatorString);
+      this.method = getMethod(type, argType);
+
+      this.predicate = (arg1, arg2) -> {
+        try {
+          return (boolean) this.method.invoke(null, arg1, arg2);
+        } catch (Exception e) {
+          throw new PredicateExecutionFailedException(e.getMessage());
+        }
+      };
+      if (operatorString.contains("NOT")) {
+        this.predicate = this.predicate.negate();
+      }
+    } catch (NoSuchMethodException e) {
+      throw new IllegalArgumentException("Method not found: " + e.getMessage());
+    }
+  }
+
+  private static Method getMethod(OperatorType type, OperandValueType argType)
+      throws NoSuchMethodException {
+    var arg = FUNCTION_MAP.get(argType);
+    return OperatorProvider.class.getMethod(toMethodName(type), arg, arg);
+  }
+
+  private static String toMethodName(OperatorType type) {
+    return type.toString().toLowerCase();
   }
 }

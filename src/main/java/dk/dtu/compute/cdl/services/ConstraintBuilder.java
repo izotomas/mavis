@@ -171,7 +171,7 @@ public class ConstraintBuilder {
         predicateStateMachine = PredicateParsingState.OPERATOR;
         break;
       case OPERATOR:
-        current.operator = new Operator(token);
+        current.operator = new Operator(token, current.operand1.valueType);
 
         if (!OPERATOR_ARGS_MAP.get(current.operator.type).contains(current.operand1.valueType)) {
           throw new IllegalArgumentException(

@@ -18,10 +18,10 @@ package dk.dtu.compute.cdl.model;
 import java.util.function.Predicate;
 
 public class Constraint {
-  public final ActionContext context;
-  public final Predicate<ActionContext> predicate;
+  public final ValidationContext context;
+  public final Predicate<ValidationContext> predicate;
 
-  public Constraint(ActionContext context, Predicate<ActionContext> predicate) {
+  public Constraint(ValidationContext context, Predicate<ValidationContext> predicate) {
     this.context = context;
     this.predicate = predicate;
   }

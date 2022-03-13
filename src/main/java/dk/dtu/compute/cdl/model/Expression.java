@@ -44,22 +44,12 @@ public final class Expression implements Iterator<Expression> {
     return next;
   }
 
-  public Predicate<ActionContext> toPredicate() {
-    return context -> {
-      try {
-        var arg1 = operand1.type == OperandType.Literal ? operand1.value
-            : context.get((String) operand1.value);
-        var arg2 = operand2.type == OperandType.Literal ? operand2.value
-            : context.get((String) operand2.value);
-        var methodName = operator.type.toString().toLowerCase();
-        var method = OperatorProvider.class.getMethod(methodName, arg1.getClass(), arg2.getClass());
+  public Predicate<ValidationContext> toPredicate() {
+    return context -> operator.predicate.test(getArg(operand1, context), getArg(operand2, context));
+  }
 
-        return operator.negated ? (!(boolean) method.invoke(null, arg1, arg2))
-            : (boolean) method.invoke(null, arg1, arg2);
-      } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException
-          | InvocationTargetException e1) {
-        throw new PredicateExecutionFailedException(e1.getMessage());
-      }
-    };
+  private Object getArg(Operand operand, ValidationContext context) {
+    return operand.type == OperandType.Literal ? operand.value
+        : context.get((String) operand.value);
   }
 }
