@@ -16,5 +16,5 @@
 package dk.dtu.compute.cdl.enums;
 
 public enum OperandType {
-  Literal, ActionReference
+  Literal, ActionReference;
 }

@@ -26,11 +26,12 @@ public class Operand {
   private final static Pattern numberPattern = Pattern.compile("^\\d+$");
   private final static Pattern stringPattern = Pattern.compile("^\\'(?<value>[\\w\\h().,*]+)\\'$");
   private final static Pattern actionPropPattern = Pattern.compile(
-      "^[a-z]+\\.((?<orig>orig(?:in)?)|(?<dest>dest(?:ination)?)|(?<edge>edge)|(?<time>time)|(?<name>name))$");
+      "^(?<actionkey>[a-z]+)\\.((?<orig>orig(?:in)?)|(?<dest>dest(?:ination)?)|(?<edge>edge)|(?<time>time)|(?<name>name))$");
 
   public final OperandValueType valueType;
   public final OperandType type;
   public final Object value;
+  public final String actionKey;
 
   public Operand(String valueString) {
     Matcher matcher;
@@ -38,13 +39,16 @@ public class Operand {
       this.valueType = OperandValueType.String;
       this.value = matcher.group("value");
       this.type = OperandType.Literal;
+      this.actionKey = null;
     } else if ((matcher = numberPattern.matcher(valueString)).matches()) {
       this.valueType = OperandValueType.Number;
       this.value = (Integer) Integer.parseInt(valueString);
       this.type = OperandType.Literal;
+      this.actionKey = null;
     } else if ((matcher = actionPropPattern.matcher(valueString)).matches()) {
       this.value = valueString;
       this.type = OperandType.ActionReference;
+      this.actionKey = matcher.group("actionkey");
       if (matcher.group("orig") != null) {
         this.valueType = OperandValueType.Vertex;
       } else if (matcher.group("dest") != null) {
@@ -61,5 +65,9 @@ public class Operand {
     } else {
       throw new IllegalArgumentException(String.format("Not a valid operand: %s", valueString));
     }
+  }
+
+  public boolean compatibleWith(Operand other) {
+    return this.valueType == other.valueType;
   }
 }

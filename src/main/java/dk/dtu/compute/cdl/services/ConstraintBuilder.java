@@ -17,13 +17,10 @@ package dk.dtu.compute.cdl.services;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.enums.OperandType;
-import dk.dtu.compute.cdl.enums.OperandValueType;
-import dk.dtu.compute.cdl.enums.OperatorType;
+import dk.dtu.compute.cdl.enums.PredicateParsingStateMachine;
 import dk.dtu.compute.cdl.model.Action;
 import dk.dtu.compute.cdl.model.ActionContext;
 import dk.dtu.compute.cdl.model.Constraint;
@@ -33,26 +30,20 @@ import dk.dtu.compute.cdl.model.Operator;
 
 public class ConstraintBuilder {
 
-  private enum PredicateParsingState {
-    OPERAND1, OPERATOR, OPERAND2, CONNECTOR,
-  }
-
-  private final Pattern actionReferencePattern = Pattern.compile("^(?<context>[a-z]+)\\.[a-z]+$");
   private final static Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
 
-  private PredicateParsingState predicateStateMachine;
+  private PredicateParsingStateMachine predicateSM;
   private Expression current;
 
   protected final HashMap<String, String> contextMap;
-
   protected Expression expression;
   protected Action contextEntry1;
   protected Action contextEntry2;
 
   public ConstraintBuilder() {
-    this.predicateStateMachine = PredicateParsingState.OPERAND1;
-    this.expression = new Expression();
+    this.predicateSM = PredicateParsingStateMachine.initialize();
     this.contextMap = new HashMap<>();
+    this.expression = new Expression();
     this.current = this.expression;
   }
 
@@ -100,8 +91,7 @@ public class ConstraintBuilder {
    * @throws IllegalStateException
    */
   protected void validate() throws IllegalStateException {
-    if (!(predicateStateMachine == PredicateParsingState.OPERAND1
-        || predicateStateMachine == PredicateParsingState.CONNECTOR)) {
+    if (!predicateSM.isEndingState()) {
       throw new IllegalStateException("Incomplete predicate");
     }
     var contexKeys = this.contextMap.keySet();
@@ -129,13 +119,9 @@ public class ConstraintBuilder {
       return;
     }
 
-    var value = (String) operand.value;
-    var matcher = actionReferencePattern.matcher(value);
-    matcher.find();
-    var contextEntry = matcher.group("context");
-    if (!contextMap.values().contains(contextEntry)) {
+    if (!contextMap.values().contains(operand.actionKey)) {
       throw new IllegalStateException(
-          String.format("Missing required action context entry: %s", contextEntry));
+          String.format("Missing required action context entry: %s", operand.actionKey));
     }
   }
 
@@ -159,32 +145,27 @@ public class ConstraintBuilder {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("Predicate token may not be null or empty.");
     }
-    switch (predicateStateMachine) {
+    switch (predicateSM) {
       case OPERAND1:
         current.operand1 = new Operand(token);
-        predicateStateMachine = PredicateParsingState.OPERATOR;
         break;
       case OPERATOR:
         current.operator = new Operator(token, current.operand1.valueType);
-        predicateStateMachine = PredicateParsingState.OPERAND2;
         break;
       case OPERAND2:
         current.operand2 = new Operand(token);
-        predicateStateMachine = PredicateParsingState.CONNECTOR;
 
-        if (current.operand1.valueType != current.operand2.valueType) {
+        if (!current.operand2.compatibleWith(current.operand1))
           throw new IllegalArgumentException(
               String.format("Operands are of incompatible type.\n\tOperand1: %s.\n\tOperand2: %s",
                   current.operand1.valueType, current.operand2.valueType));
-        }
-
         break;
       case CONNECTOR:
         current = new Expression(current);
         current.connector = token;
-        predicateStateMachine = PredicateParsingState.OPERAND1;
         break;
     }
+    predicateSM = predicateSM.next();
     return this;
   }
 }
