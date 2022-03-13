@@ -82,22 +82,4 @@ public class ConstraintBuilderTest {
         new Action(null, new Pair<>(1, 1), 0, null), new Action(null, new Pair<>(1, 1), 0, null),
         true));
   }
-
-  @Test
-  public void buildWithDoubleActionTest() throws StatementParsingException {
-    // arrange
-    String constraintDefinition =
-        "ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10";
-    Action requesting = new Action(null, null, 0, "NooOp");
-    boolean expectedEvaluation = false;
-
-    var sut = PARSER.Parse(constraintDefinition).withRequestingActionContext(requesting).build();
-
-    // act
-    var actual = sut.evaluate();
-
-    // assert
-    assertThat(actual).isEqualTo(expectedEvaluation);
-  }
-
 }

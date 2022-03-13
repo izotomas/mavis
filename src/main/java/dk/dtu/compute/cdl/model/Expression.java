@@ -38,6 +38,15 @@ public final class Expression implements Iterator<Expression> {
     this.operand2 = operand2;
   }
 
+  protected Expression(Operand operand1, Operator operator, Operand operand2, Connector connector,
+      Expression next) {
+    this.operand1 = operand1;
+    this.operator = operator;
+    this.operand2 = operand2;
+    this.connector = connector;
+    this.next = next;
+  }
+
   public boolean hasNext() {
     return next != null;
   }
