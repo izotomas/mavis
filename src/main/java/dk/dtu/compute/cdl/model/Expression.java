@@ -22,7 +22,7 @@ public final class Expression implements Iterator<Expression> {
   public Operand operand1;
   public Operator operator;
   public Operand operand2;
-  public String connector;
+  public Connector connector;
 
   private Expression next;
 

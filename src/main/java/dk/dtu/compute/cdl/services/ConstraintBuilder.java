@@ -19,14 +19,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.function.Predicate;
 import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.enums.PredicateParsingStateMachine;
 import dk.dtu.compute.cdl.model.Action;
 import dk.dtu.compute.cdl.model.ActionContext;
+import dk.dtu.compute.cdl.model.Connector;
 import dk.dtu.compute.cdl.model.Constraint;
 import dk.dtu.compute.cdl.model.Expression;
 import dk.dtu.compute.cdl.model.Operand;
 import dk.dtu.compute.cdl.model.Operator;
+import dk.dtu.compute.cdl.model.ValidationContext;
 
 public class ConstraintBuilder {
 
@@ -59,10 +62,19 @@ public class ConstraintBuilder {
 
     var curr = expression;
     var predicate = curr.toPredicate();
+    Predicate<ValidationContext> nextPredicate;
     while (curr.hasNext()) {
       curr = curr.next();
-      if (curr.connector.equals("AND")) {
-        predicate = predicate.and(curr.toPredicate());
+      nextPredicate = curr.toPredicate();
+      if (curr.connector.negated) {
+        nextPredicate = nextPredicate.negate();
+      }
+
+      switch (curr.connector.type) {
+        case AND:
+          predicate = predicate.and(nextPredicate);
+        case OR:
+          predicate = predicate.or(nextPredicate);
       }
     }
 
@@ -162,7 +174,7 @@ public class ConstraintBuilder {
         break;
       case CONNECTOR:
         current = new Expression(current);
-        current.connector = token;
+        current.connector = new Connector(token);
         break;
     }
     predicateSM = predicateSM.next();
