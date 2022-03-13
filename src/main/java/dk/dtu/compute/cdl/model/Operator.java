@@ -42,9 +42,9 @@ public class Operator {
       this.type = OperatorType.fromString(operatorString);
       this.method = getMethod(type, argType);
 
-      this.predicate = (arg1, arg2) -> {
+      this.predicate = (operand1, operand2) -> {
         try {
-          return (boolean) this.method.invoke(null, arg1, arg2);
+          return (boolean) this.method.invoke(null, operand1, operand2);
         } catch (Exception e) {
           throw new PredicateExecutionFailedException(e.getMessage());
         }
