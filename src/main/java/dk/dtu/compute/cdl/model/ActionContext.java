@@ -47,6 +47,7 @@ public class ActionContext implements ValidationContext {
     this.map.put(String.format("%s.origin", actionRef), action.origin);
     this.map.put(String.format("%s.time", actionRef), action.time);
     this.map.put(String.format("%s.name", actionRef), action.name);
+    this.map.put(String.format("%s.agent", actionRef), action.agent);
     this.map.put(String.format("%s.edge", actionRef),
         new Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>(action.origin,
             action.destination));

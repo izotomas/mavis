@@ -18,8 +18,8 @@ public class ConstraintBuilderTest {
   public void validationTest(String constraintDefinition) throws StatementParsingException {
     // arrange
     var sut = PARSER.Parse(constraintDefinition)
-        .withRequestingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"))
-        .withBlockingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME"));
+        .withRequestingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0))
+        .withBlockingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0));
 
     // act
     sut.validate();
@@ -65,20 +65,20 @@ public class ConstraintBuilderTest {
   private static Stream<Arguments> provideValidSingleActionArgs() {
     return Stream.of(
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
-            new Action(null, null, 0, "NoOp"), true),
+            new Action(null, null, 0, "NoOp", 0), true),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
-            new Action(null, null, 11, "NoOp"), false),
+            new Action(null, null, 11, "NoOp", 0), false),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' OR a.time IS LESS THAN 10",
-            new Action(null, null, 11, "NoOp"), true),
+            new Action(null, null, 11, "NoOp", 0), true),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS NOT 'NoOp' OR a.time IS LESS THAN 10",
-            new Action(null, null, 11, "NoOp"), false),
+            new Action(null, null, 11, "NoOp", 0), false),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS NOT 'NoOp' AND a.time IS LESS THAN 10",
-            new Action(null, null, 10, "Push"), false));
+            new Action(null, null, 10, "Push", 0), false));
   }
 
   private static Stream<Arguments> provideValidDoubleActionArgs() {
     return Stream.of(Arguments.of("ACTION a IS BLOCKED BY ACTION b IF a.dest IS b.dest",
-        new Action(null, new Pair<>(1, 1), 0, null), new Action(null, new Pair<>(1, 1), 0, null),
-        true));
+        new Action(null, new Pair<>(1, 1), 0, null, 0),
+        new Action(null, new Pair<>(1, 1), 0, null, 0), true));
   }
 }

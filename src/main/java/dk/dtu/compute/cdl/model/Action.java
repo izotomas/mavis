@@ -22,12 +22,14 @@ public class Action {
   public final Pair<Integer, Integer> destination;
   public final Integer time;
   public final String name;
+  public final Integer agent;
 
-  public Action(Pair<Integer, Integer> origin, Pair<Integer, Integer> destination, int time,
-      String name) {
+  public Action(Pair<Integer, Integer> origin, Pair<Integer, Integer> destination, Integer time,
+      String name, Integer agent) {
     this.origin = origin;
     this.destination = destination;
     this.time = time;
     this.name = name;
+    this.agent = agent;
   }
 }

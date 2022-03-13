@@ -18,6 +18,7 @@ public class ExpressionTest {
   private final static Operator IS_MORE = new Operator("IS MORE THAN", OperandValueType.Number);
 
   private final static Operand A_NAME = new Operand("a.name");
+  private final static Operand A_AGENT = new Operand("a.agent");
   private final static Operand A_TIME = new Operand("a.time");
   private final static Operand A_DEST = new Operand("a.dest");
   private final static Operand B_DEST = new Operand("b.dest");
@@ -27,15 +28,17 @@ public class ExpressionTest {
   private final static Operand LITERAL_2 = new Operand("2");
   private final static Operand LITERAL_PUSH = new Operand("'Push'");
 
+  private final static ActionContext CTX_A_AGENT_0 =
+      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, null, 0)));
   private final static ActionContext CTX_A_TIME_1 =
-      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 1, null)));
+      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 1, null, 0)));
   private final static ActionContext CTX_A_PUSH =
-      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "Push")));
+      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "Push", 0)));
   private final static ActionContext CTX_A_NOOP =
-      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "NoOp")));
+      new ActionContext(new SimpleEntry<>("a", new Action(null, null, 0, "NoOp", 0)));
 
-  private final static Action CTX_A_DEST_1_1 = new Action(null, new Pair<>(1, 1), 0, null);
-  private final static Action CTX_A_DEST_1_2 = new Action(null, new Pair<>(1, 2), 0, null);
+  private final static Action CTX_A_DEST_1_1 = new Action(null, new Pair<>(1, 1), 0, null, 0);
+  private final static Action CTX_A_DEST_1_2 = new Action(null, new Pair<>(1, 2), 0, null, 0);
 
   @ParameterizedTest
   @MethodSource("provideValidSingleExpressionIsArgs")
@@ -52,7 +55,9 @@ public class ExpressionTest {
   }
 
   private static Stream<Arguments> provideValidSingleExpressionIsArgs() {
-    return Stream.of(Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_PUSH, true),
+    return Stream.of(Arguments.of(A_AGENT, IS_NUM, LITERAL_0, CTX_A_AGENT_0, true),
+        Arguments.of(A_AGENT, IS_NUM, LITERAL_1, CTX_A_AGENT_0, false),
+        Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_PUSH, true),
         Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_NOOP, false),
         Arguments.of(A_TIME, IS_NUM, LITERAL_1, CTX_A_TIME_1, true),
         Arguments.of(A_TIME, IS_NUM, LITERAL_0, CTX_A_TIME_1, false),

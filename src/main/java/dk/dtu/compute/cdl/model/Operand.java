@@ -24,7 +24,7 @@ public class Operand {
   private final static Pattern numberPattern = Pattern.compile("^\\d+$");
   private final static Pattern stringPattern = Pattern.compile("^\\'(?<value>[\\w\\h().,*]+)\\'$");
   private final static Pattern actionPropPattern = Pattern.compile(
-      "^(?<actionkey>[a-z]+)\\.((?<orig>orig(?:in)?)|(?<dest>dest(?:ination)?)|(?<edge>edge)|(?<time>time)|(?<name>name))$");
+      "^(?<actionkey>[a-z]+)\\.((?<orig>orig(?:in)?)|(?<dest>dest(?:ination)?)|(?<edge>edge)|(?<time>time)|(?<name>name)|(?<agent>agent))$");
 
   protected final Object value;
 
@@ -58,6 +58,8 @@ public class Operand {
         this.valueType = OperandValueType.Number;
       } else if (matcher.group("name") != null) {
         this.valueType = OperandValueType.String;
+      } else if (matcher.group("agent") != null) {
+        this.valueType = OperandValueType.Number;
       } else {
         throw new IllegalArgumentException(String.format("Not a valid operand: %s", valueString));
       }
