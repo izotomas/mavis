@@ -3,6 +3,7 @@ package dk.dtu.compute.cdl.services;
 import static org.assertj.core.api.Assertions.*;
 import java.util.stream.Stream;
 import org.javatuples.Pair;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,7 +68,13 @@ public class ConstraintBuilderTest {
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
             new Action(null, null, 0, "NoOp"), true),
         Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10",
-            new Action(null, null, 11, "NoOp"), false));
+            new Action(null, null, 11, "NoOp"), false),
+        Arguments.of("ACTION a IS BLOCKED IF a.name IS 'NoOp' OR a.time IS LESS THAN 10",
+            new Action(null, null, 11, "NoOp"), true),
+        Arguments.of("ACTION a IS BLOCKED IF a.name IS NOT 'NoOp' OR a.time IS LESS THAN 10",
+            new Action(null, null, 11, "NoOp"), false),
+        Arguments.of("ACTION a IS BLOCKED IF a.name IS NOT 'NoOp' AND a.time IS LESS THAN 10",
+            new Action(null, null, 10, "Push"), false));
   }
 
   private static Stream<Arguments> provideValidDoubleActionArgs() {
@@ -75,4 +82,22 @@ public class ConstraintBuilderTest {
         new Action(null, new Pair<>(1, 1), 0, null), new Action(null, new Pair<>(1, 1), 0, null),
         true));
   }
+
+  @Test
+  public void buildWithDoubleActionTest() throws StatementParsingException {
+    // arrange
+    String constraintDefinition =
+        "ACTION a IS BLOCKED IF a.name IS 'NoOp' AND a.time IS LESS THAN 10";
+    Action requesting = new Action(null, null, 0, "NooOp");
+    boolean expectedEvaluation = false;
+
+    var sut = PARSER.Parse(constraintDefinition).withRequestingActionContext(requesting).build();
+
+    // act
+    var actual = sut.evaluate();
+
+    // assert
+    assertThat(actual).isEqualTo(expectedEvaluation);
+  }
+
 }

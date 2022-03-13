@@ -60,23 +60,7 @@ public class ConstraintBuilder {
     }
 
 
-    var curr = expression;
-    var predicate = curr.toPredicate();
-    Predicate<ValidationContext> nextPredicate;
-    while (curr.hasNext()) {
-      curr = curr.next();
-      nextPredicate = curr.toPredicate();
-      if (curr.connector.negated) {
-        nextPredicate = nextPredicate.negate();
-      }
-
-      switch (curr.connector.type) {
-        case AND:
-          predicate = predicate.and(nextPredicate);
-        case OR:
-          predicate = predicate.or(nextPredicate);
-      }
-    }
+    var predicate = expression.toPredicate();
 
     return new Constraint(context, predicate);
   }

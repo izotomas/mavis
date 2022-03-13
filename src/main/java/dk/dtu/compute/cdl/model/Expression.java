@@ -46,8 +46,31 @@ public final class Expression implements Iterator<Expression> {
     return next;
   }
 
-  public Predicate<ValidationContext> toPredicate() {
+  private Predicate<ValidationContext> toSinglePredicate() {
     return context -> operator.predicate.test(operand1.getValue(context),
         operand2.getValue(context));
+  }
+
+  public Predicate<ValidationContext> toPredicate() {
+    var curr = this;
+    var predicate = curr.toSinglePredicate();
+    Predicate<ValidationContext> nextPredicate;
+    while (curr.hasNext()) {
+      curr = curr.next();
+      nextPredicate = curr.toSinglePredicate();
+      if (curr.connector.negated) {
+        nextPredicate = nextPredicate.negate();
+      }
+
+      switch (curr.connector.type) {
+        case AND:
+          predicate = predicate.and(nextPredicate);
+          break;
+        case OR:
+          predicate = predicate.or(nextPredicate);
+          break;
+      }
+    }
+    return predicate;
   }
 }

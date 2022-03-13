@@ -34,11 +34,14 @@ public class Operator {
           new SimpleEntry<>(OperandValueType.Number, Integer.class));
 
   private final Method method;
+  private final String string;
+
   public final OperatorType type;
   public BiPredicate<Object, Object> predicate;
 
   public Operator(String operatorString, OperandValueType argType) {
     try {
+      this.string = operatorString;
       this.type = OperatorType.fromString(operatorString);
       this.method = getMethod(type, argType);
 
@@ -66,5 +69,10 @@ public class Operator {
 
   private static String toMethodName(OperatorType type) {
     return type.toString().toLowerCase();
+  }
+
+  @Override
+  public String toString() {
+    return this.string;
   }
 }
