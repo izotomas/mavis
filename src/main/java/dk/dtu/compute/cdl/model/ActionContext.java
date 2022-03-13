@@ -28,6 +28,14 @@ public class ActionContext implements ValidationContext {
     this.map = new HashMap<>();
   }
 
+  @SafeVarargs
+  public ActionContext(SimpleEntry<String, Action>... entries) {
+    this.map = new HashMap<>();
+    for (var entry : entries) {
+      this.mapContext(entry);
+    }
+  }
+
   public ActionContext mapContext(SimpleEntry<String, Action> entry) {
     var actionRef = entry.getKey();
     var action = entry.getValue();
