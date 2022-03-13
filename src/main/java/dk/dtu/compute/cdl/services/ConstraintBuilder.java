@@ -39,12 +39,6 @@ public class ConstraintBuilder {
 
   private final Pattern actionReferencePattern = Pattern.compile("^(?<context>[a-z]+)\\.[a-z]+$");
   private final static Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
-  private final static Map<OperatorType, Set<OperandValueType>> OPERATOR_ARGS_MAP = Map.ofEntries(
-      new SimpleEntry<>(OperatorType.IS,
-          Set.of(OperandValueType.Number, OperandValueType.String, OperandValueType.Vertex)),
-      new SimpleEntry<>(OperatorType.LESS, Set.of(OperandValueType.Number)),
-      new SimpleEntry<>(OperatorType.MORE, Set.of(OperandValueType.Number)),
-      new SimpleEntry<>(OperatorType.OVERLAPS, Set.of(OperandValueType.Edge)));
 
   private PredicateParsingState predicateStateMachine;
   private Expression current;
@@ -172,24 +166,11 @@ public class ConstraintBuilder {
         break;
       case OPERATOR:
         current.operator = new Operator(token, current.operand1.valueType);
-
-        if (!OPERATOR_ARGS_MAP.get(current.operator.type).contains(current.operand1.valueType)) {
-          throw new IllegalArgumentException(
-              String.format("Operator %s does not support operand1 of type: %s", token,
-                  current.operand1.valueType));
-        }
-
         predicateStateMachine = PredicateParsingState.OPERAND2;
         break;
       case OPERAND2:
         current.operand2 = new Operand(token);
         predicateStateMachine = PredicateParsingState.CONNECTOR;
-
-        if (!OPERATOR_ARGS_MAP.get(current.operator.type).contains(current.operand2.valueType)) {
-          throw new IllegalArgumentException(
-              String.format("Operator %s does not support operand2 of type: %s", token,
-                  current.operand1.valueType));
-        }
 
         if (current.operand1.valueType != current.operand2.valueType) {
           throw new IllegalArgumentException(

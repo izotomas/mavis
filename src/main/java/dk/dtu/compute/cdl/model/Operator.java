@@ -53,7 +53,8 @@ public class Operator {
         this.predicate = this.predicate.negate();
       }
     } catch (NoSuchMethodException e) {
-      throw new IllegalArgumentException("Method not found: " + e.getMessage());
+      throw new IllegalArgumentException(String
+          .format("Operator %s does not support operand1 of type: %s", operatorString, argType));
     }
   }
 
