@@ -15,7 +15,6 @@
  */
 package dk.dtu.compute.cdl.services;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
 
