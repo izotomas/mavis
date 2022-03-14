@@ -15,9 +15,6 @@
  */
 package dk.dtu.compute.cdl.services;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import dk.dtu.compute.cdl.enums.OperandType;
 import dk.dtu.compute.cdl.enums.PredicateParsingStateMachine;
@@ -30,52 +27,84 @@ import dk.dtu.compute.cdl.model.Operand;
 import dk.dtu.compute.cdl.model.Operator;
 
 public class ConstraintBuilder {
+  class ContextEntry {
+    public String key;
+    public Action entry;
 
-  private final static Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
+    public boolean isValid() {
+      return this.key != null && !this.key.isEmpty() && this.entry != null;
+    }
+  }
 
   private PredicateParsingStateMachine predicateSM;
   private Expression current;
 
-  protected final HashMap<String, String> contextMap;
   protected Expression expression;
-  protected Action contextEntry1;
-  protected Action contextEntry2;
+  protected ContextEntry requestingContext;
+  protected ContextEntry restrictingContext;
 
   public ConstraintBuilder() {
     this.predicateSM = PredicateParsingStateMachine.initialize();
-    this.contextMap = new HashMap<>();
+    this.requestingContext = new ContextEntry();
+    this.restrictingContext = new ContextEntry();
     this.expression = new Expression();
     this.current = this.expression;
+  }
+
+  public boolean isSingleContextConstraint() {
+    if (!this.requestingContext.isValid()) {
+      throw new IllegalStateException("Must provide context mapping first.");
+    }
+    return this.restrictingContext.key == null;
   }
 
   public Constraint build() throws IllegalStateException {
     validate();
 
     var context = new ActionContext()
-        .mapContext(new SimpleEntry<>(this.contextMap.get("entry1"), this.contextEntry1));
-    if (this.contextEntry2 != null) {
-      context.mapContext(new SimpleEntry<>(this.contextMap.get("entry2"), this.contextEntry2));
-    }
+        .mapContext(new SimpleEntry<>(this.requestingContext.key, this.requestingContext.entry));
 
+    if (this.restrictingContext.isValid()) {
+      context.mapContext(
+          new SimpleEntry<>(this.restrictingContext.key, this.restrictingContext.entry));
+    }
 
     var predicate = expression.toPredicate();
 
     return new Constraint(context, predicate);
   }
 
-  public ConstraintBuilder withRequestingActionContext(Action action) {
-    if (action == null) {
+  public ConstraintBuilder withRequestingContext(Action context) {
+    if (context == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
-    this.contextEntry1 = action;
+    this.requestingContext.entry = context;
     return this;
   }
 
-  public ConstraintBuilder withBlockingActionContext(Action action) {
-    if (action == null) {
+  protected ConstraintBuilder withRequestingContextName(String name) {
+    if (name == null || name.isEmpty() || name == this.restrictingContext.key) {
+      throw new IllegalArgumentException(
+          String.format("Context key must be unique and non null.\n\tKey: %s", name));
+    }
+    this.requestingContext.key = name;
+    return this;
+  }
+
+  public ConstraintBuilder withRestrictingContext(Action context) {
+    if (context == null) {
       throw new IllegalArgumentException("Action context may not be null.");
     }
-    this.contextEntry2 = action;
+    this.restrictingContext.entry = context;
+    return this;
+  }
+
+  protected ConstraintBuilder withRestrictingContextName(String name) {
+    if (name == null || name.isEmpty() || name == this.requestingContext.key) {
+      throw new IllegalArgumentException(
+          String.format("Context key must be unique and non null.\n\tKey: %s", name));
+    }
+    this.restrictingContext.key = name;
     return this;
   }
 
@@ -88,51 +117,29 @@ public class ConstraintBuilder {
     if (!predicateSM.isEndingState()) {
       throw new IllegalStateException("Incomplete predicate");
     }
-    var contexKeys = this.contextMap.keySet();
-    if (contexKeys.size() == 0) {
-      throw new IllegalStateException("Missing action context");
-
-    } else if (contextEntry1 == null || this.contextMap.get("entry1") == null) {
-      throw new IllegalStateException("Missing requesting action context");
-    } else if (contexKeys.size() == 2
-        && (contextEntry2 == null || this.contextMap.get("entry2") == null)) {
-      throw new IllegalStateException("Missing blocking action context");
+    if (!requestingContext.isValid()) {
+      throw new IllegalStateException("Missing required requesting context");
+    }
+    if (restrictingContext.key != null && !restrictingContext.isValid()) {
+      throw new IllegalStateException("Missing required restricting context");
     }
 
     // contextual variables
     var curr = expression;
     while (curr != null) {
-      validate(curr.operand1);
-      validate(curr.operand2);
+      for (var operand : new Operand[] {curr.operand1, curr.operand2}) {
+        if (operand.type != OperandType.ActionReference) {
+          continue;
+        }
+
+        if (!operand.actionKey.equals(requestingContext.key)
+            && !operand.actionKey.equals(restrictingContext.key)) {
+          throw new IllegalStateException(
+              String.format("Missing required action context entry: %s", operand.actionKey));
+        }
+      }
       curr = curr.next();
     }
-  }
-
-  private void validate(Operand operand) throws IllegalStateException {
-    if (operand.type != OperandType.ActionReference) {
-      return;
-    }
-
-    if (!contextMap.values().contains(operand.actionKey)) {
-      throw new IllegalStateException(
-          String.format("Missing required action context entry: %s", operand.actionKey));
-    }
-  }
-
-  protected ConstraintBuilder withContextMapping(SimpleEntry<String, String> entry)
-      throws IllegalArgumentException {
-    var key = entry.getKey();
-    var val = entry.getValue();
-    if (key.isEmpty() || val.isEmpty() || this.contextMap.containsKey(key)) {
-      throw new IllegalArgumentException(String
-          .format("Context mapping must be unique and non null.\n\tKey: %s | Value: %s", key, val));
-    }
-    if (!ALLOWED_CONTEXT_KEYS.contains(key)) {
-      throw new IllegalArgumentException(String.format("Invalid key %s.\n\tAllowed keys: %s", key,
-          Arrays.toString(ALLOWED_CONTEXT_KEYS.toArray())));
-    }
-    this.contextMap.put(key, val);
-    return this;
   }
 
   protected ConstraintBuilder withPredicateToken(String token) throws IllegalArgumentException {

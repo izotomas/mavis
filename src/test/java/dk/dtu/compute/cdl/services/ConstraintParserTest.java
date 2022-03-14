@@ -35,8 +35,8 @@ public class ConstraintParserTest {
 
     // act
     sut.ParseContext(context);
-    var actualEntry1 = sut.builder.contextMap.get("entry1");
-    var actualEntry2 = sut.builder.contextMap.get("entry2");
+    var actualEntry1 = sut.builder.requestingContext.key;
+    var actualEntry2 = sut.builder.restrictingContext.key;
 
     // assert
     assertThat(actualEntry1).isEqualTo(expectedEntry1);

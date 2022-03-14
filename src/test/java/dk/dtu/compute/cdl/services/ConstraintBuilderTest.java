@@ -18,8 +18,8 @@ public class ConstraintBuilderTest {
   public void validationTest(String constraintDefinition) throws StatementParsingException {
     // arrange
     var sut = PARSER.Parse(constraintDefinition)
-        .withRequestingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0))
-        .withBlockingActionContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0));
+        .withRequestingContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0))
+        .withRestrictingContext(new Action(new Pair<>(1, 1), new Pair<>(1, 1), 1, "NAME", 0));
 
     // act
     sut.validate();
@@ -27,11 +27,10 @@ public class ConstraintBuilderTest {
 
   @ParameterizedTest
   @MethodSource("provideValidSingleActionArgs")
-  public void buildWithSingleActionTest(String constraintDefinition, Action requestingContext,
+  public void buildWithSingleActionTest(String constraintDefinition, Action requesting,
       boolean expectedEvaluation) throws StatementParsingException {
     // arrange
-    var sut =
-        PARSER.Parse(constraintDefinition).withRequestingActionContext(requestingContext).build();
+    var sut = PARSER.Parse(constraintDefinition).withRequestingContext(requesting).build();
 
     // act
     var actual = sut.evaluate();
@@ -45,8 +44,8 @@ public class ConstraintBuilderTest {
   public void buildWithDoubleActionTest(String constraintDefinition, Action requesting,
       Action blocking, boolean expectedEvaluation) throws StatementParsingException {
     // arrange
-    var sut = PARSER.Parse(constraintDefinition).withRequestingActionContext(requesting)
-        .withBlockingActionContext(blocking).build();
+    var sut = PARSER.Parse(constraintDefinition).withRequestingContext(requesting)
+        .withRestrictingContext(blocking).build();
 
     // act
     var actual = sut.evaluate();

@@ -15,14 +15,12 @@
  */
 package dk.dtu.compute.cdl.services;
 
-import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Pattern;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
 
 public class ConstraintParser {
 
-  private final Set<String> ALLOWED_CONTEXT_KEYS = Set.of("entry1", "entry2");
   private final String[] EXPRESSION_BLOCKS =
       new String[] {"connector", "operand1", "operator", "operand2"};
 
@@ -46,12 +44,12 @@ public class ConstraintParser {
   private final static Pattern contextPattern = Pattern.compile(
       // start
       "^ACTION\\h"
-          // first context entry
-          + "(?<entry1>[a-z]+)"
+          // requesting context entry
+          + "(?<requesting>[a-z]+)"
           // is blocked | is blocked by action
           + "\\hIS\\hBLOCKED(?:\\hBY\\hACTION\\h"
-          // second context entry (optional)
-          + "(?<entry2>[a-z]+)"
+          // restricting context entry
+          + "(?<restricting>[a-z]+)"
           // end
           + ")?$");
 
@@ -129,11 +127,12 @@ public class ConstraintParser {
           "Context definition does not match the required pattern.\n\tStatement: %s\n\tPattern: %s",
           context, ConstraintParser.contextPattern.pattern()));
     }
-    for (var groupName : ALLOWED_CONTEXT_KEYS) {
-      var value = matcher.group(groupName);
-      if (value != null) {
-        builder.withContextMapping(new SimpleEntry<String, String>(groupName, value));
-      }
+    String contextName;
+    if ((contextName = matcher.group("requesting")) != null) {
+      builder.withRequestingContextName(contextName);
+    }
+    if ((contextName = matcher.group("restricting")) != null) {
+      builder.withRestrictingContextName(contextName);
     }
   }
 
