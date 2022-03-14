@@ -25,47 +25,50 @@ class Action {
   final short moveDeltaCol;
   final short boxDeltaRow;
   final short boxDeltaCol;
+  final String name;
 
-  private Action(Type type, int moveDeltaRow, int moveDeltaCol, int boxDeltaRow, int boxDeltaCol) {
+  private Action(Type type, int moveDeltaRow, int moveDeltaCol, int boxDeltaRow, int boxDeltaCol,
+      String name) {
     this.type = type;
     this.moveDeltaRow = (short) moveDeltaRow;
     this.moveDeltaCol = (short) moveDeltaCol;
     this.boxDeltaRow = (short) boxDeltaRow;
     this.boxDeltaCol = (short) boxDeltaCol;
+    this.name = name;
   }
 
-  static final Action NoOp = new Action(Type.NoOp, 0, 0, 0, 0);
+  static final Action NoOp = new Action(Type.NoOp, 0, 0, 0, 0, "NoOp");
 
-  static final Action MoveN = new Action(Type.Move, -1, 0, 0, 0);
-  static final Action MoveS = new Action(Type.Move, 1, 0, 0, 0);
-  static final Action MoveE = new Action(Type.Move, 0, 1, 0, 0);
-  static final Action MoveW = new Action(Type.Move, 0, -1, 0, 0);
+  static final Action MoveN = new Action(Type.Move, -1, 0, 0, 0, "Move(N)");
+  static final Action MoveS = new Action(Type.Move, 1, 0, 0, 0, "Move(S)");
+  static final Action MoveE = new Action(Type.Move, 0, 1, 0, 0, "Move(E)");
+  static final Action MoveW = new Action(Type.Move, 0, -1, 0, 0, "Move(W)");
 
-  static final Action PushNN = new Action(Type.Push, -1, 0, -1, 0);
-  static final Action PushNE = new Action(Type.Push, 0, 1, -1, 0);
-  static final Action PushNW = new Action(Type.Push, 0, -1, -1, 0);
-  static final Action PushSE = new Action(Type.Push, 0, 1, 1, 0);
-  static final Action PushSW = new Action(Type.Push, 0, -1, 1, 0);
-  static final Action PushSS = new Action(Type.Push, 1, 0, 1, 0);
-  static final Action PushEN = new Action(Type.Push, -1, 0, 0, 1);
-  static final Action PushES = new Action(Type.Push, 1, 0, 0, 1);
-  static final Action PushEE = new Action(Type.Push, 0, 1, 0, 1);
-  static final Action PushWN = new Action(Type.Push, -1, 0, 0, -1);
-  static final Action PushWS = new Action(Type.Push, 1, 0, 0, -1);
-  static final Action PushWW = new Action(Type.Push, 0, -1, 0, -1);
+  static final Action PushNN = new Action(Type.Push, -1, 0, -1, 0, "Push(N,N)");
+  static final Action PushNE = new Action(Type.Push, 0, 1, -1, 0, "Push(N,E)");
+  static final Action PushNW = new Action(Type.Push, 0, -1, -1, 0, "Push(N,W)");
+  static final Action PushSE = new Action(Type.Push, 0, 1, 1, 0, "Push(S,E)");
+  static final Action PushSW = new Action(Type.Push, 0, -1, 1, 0, "Push(S,W)");
+  static final Action PushSS = new Action(Type.Push, 1, 0, 1, 0, "Push(S,S)");
+  static final Action PushEN = new Action(Type.Push, -1, 0, 0, 1, "Push(E,N)");
+  static final Action PushES = new Action(Type.Push, 1, 0, 0, 1, "Push(E,S)");
+  static final Action PushEE = new Action(Type.Push, 0, 1, 0, 1, "Push(E,E)");
+  static final Action PushWN = new Action(Type.Push, -1, 0, 0, -1, "Push(W,N)");
+  static final Action PushWS = new Action(Type.Push, 1, 0, 0, -1, "Push(W,S)");
+  static final Action PushWW = new Action(Type.Push, 0, -1, 0, -1, "Push(W,W)");
 
-  static final Action PullNN = new Action(Type.Pull, -1, 0, -1, 0);
-  static final Action PullNE = new Action(Type.Pull, -1, 0, 0, 1);
-  static final Action PullNW = new Action(Type.Pull, -1, 0, 0, -1);
-  static final Action PullSS = new Action(Type.Pull, 1, 0, 1, 0);
-  static final Action PullSE = new Action(Type.Pull, 1, 0, 0, 1);
-  static final Action PullSW = new Action(Type.Pull, 1, 0, 0, -1);
-  static final Action PullEN = new Action(Type.Pull, 0, 1, -1, 0);
-  static final Action PullES = new Action(Type.Pull, 0, 1, 1, 0);
-  static final Action PullEE = new Action(Type.Pull, 0, 1, 0, 1);
-  static final Action PullWN = new Action(Type.Pull, 0, -1, -1, 0);
-  static final Action PullWS = new Action(Type.Pull, 0, -1, 1, 0);
-  static final Action PullWW = new Action(Type.Pull, 0, -1, 0, -1);
+  static final Action PullNN = new Action(Type.Pull, -1, 0, -1, 0, "Pull(N,N)");
+  static final Action PullNE = new Action(Type.Pull, -1, 0, 0, 1, "Pull(N,E)");
+  static final Action PullNW = new Action(Type.Pull, -1, 0, 0, -1, "Pull(N,W)");
+  static final Action PullSS = new Action(Type.Pull, 1, 0, 1, 0, "Pull(S,S)");
+  static final Action PullSE = new Action(Type.Pull, 1, 0, 0, 1, "Pull(S,E)");
+  static final Action PullSW = new Action(Type.Pull, 1, 0, 0, -1, "Pull(S,W)");
+  static final Action PullEN = new Action(Type.Pull, 0, 1, -1, 0, "Pull(E,N)");
+  static final Action PullES = new Action(Type.Pull, 0, 1, 1, 0, "Pull(E,S)");
+  static final Action PullEE = new Action(Type.Pull, 0, 1, 0, 1, "Pull(E,E)");
+  static final Action PullWN = new Action(Type.Pull, 0, -1, -1, 0, "Pull(W,N)");
+  static final Action PullWS = new Action(Type.Pull, 0, -1, 1, 0, "Pull(W,S)");
+  static final Action PullWW = new Action(Type.Pull, 0, -1, 0, -1, "Pull(W,W)");
 
   static Action parse(String action) {
     switch (action) {
