@@ -1,1 +1,1 @@
-ACTION a BLOCKED BY ACTION b IF a.dest IS b.dest
+ACTION a IS BLOCKED BY ACTION b IF a.dest IS b.dest
