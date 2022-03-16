@@ -52,7 +52,7 @@ public class ConstraintBuilder {
   }
 
   public boolean isSingleContextConstraint() {
-    if (!this.requestingContext.isValid()) {
+    if (this.requestingContext.key == null) {
       throw new IllegalStateException("Must provide context mapping first.");
     }
     return this.restrictingContext.key == null;

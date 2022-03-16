@@ -16,6 +16,7 @@
 package dk.dtu.compute.mavis.domain;
 
 import dk.dtu.compute.mavis.client.Timeout;
+import dk.dtu.compute.mavis.domain.gridworld.hospital.CldHospitalDomain;
 import dk.dtu.compute.mavis.domain.gridworld.hospital.HospitalDomain;
 
 import java.awt.Graphics2D;
@@ -50,6 +51,9 @@ public interface Domain {
       case "hospital":
         domain = new HospitalDomain(levelFile, false);
         break;
+      case "hospital-cld":
+        domain = new CldHospitalDomain(levelFile, false);
+        break;
       default:
         throw new ParseException(String.format("Unsupported domain type: %s.", domainType));
     }
@@ -64,6 +68,9 @@ public interface Domain {
       case "hospital":
         domain = new HospitalDomain(replayFile, true);
         break;
+      case "hospital-cld":
+        domain = new CldHospitalDomain(replayFile, true);
+        break;
       default:
         throw new ParseException(String.format("Unsupported domain type: %s.", domainType));
     }
@@ -71,7 +78,7 @@ public interface Domain {
   }
 
   static String[] getSupportedDomains() {
-    return new String[] {"hospital"};
+    return new String[] {"hospital", "hospital-cld"};
   }
 
   /**

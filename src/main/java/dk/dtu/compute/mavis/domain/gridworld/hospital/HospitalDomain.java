@@ -51,7 +51,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public final class HospitalDomain implements Domain {
+public class HospitalDomain implements Domain {
   private Path levelFile;
   private StateSequence stateSequence;
 
@@ -129,6 +129,19 @@ public final class HospitalDomain implements Domain {
     var levelInfo = new LevelReader(domainFile, isLogFile).getLevel();
     this.stateSequence = new StateSequence(levelInfo);
     this.validator = new HospitalValidator(levelInfo);
+
+    if (isLogFile) {
+      this.clientName = this.stateSequence.levelInfo.clientName;
+      this.numActions = this.stateSequence.getNumStates() - 1;
+    }
+  }
+
+  public HospitalDomain(Path domainFile, boolean isLogFile, Validator<Action, State> validator)
+      throws IOException, ParseException {
+    this.levelFile = domainFile;
+    var levelInfo = new LevelReader(domainFile, isLogFile).getLevel();
+    this.stateSequence = new StateSequence(levelInfo);
+    this.validator = validator;
 
     if (isLogFile) {
       this.clientName = this.stateSequence.levelInfo.clientName;
