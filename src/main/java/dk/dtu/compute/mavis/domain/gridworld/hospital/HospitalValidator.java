@@ -15,18 +15,9 @@
  */
 package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
-public interface Validator {
+import dk.dtu.compute.mavis.domain.gridworld.Validator;
 
-  /**
-   * Determines which actions are applicable and non-conflicting. Returns an array
-   * with true for each action which was applicable and non-conflicting, and false
-   * otherwise.
-   */
-  boolean[] isApplicable(Action[] jointAction, State state);
-}
-
-
-class HospitalValidator implements Validator {
+class HospitalValidator implements Validator<Action, State> {
 
   private final LevelInfo levelInfo;
 

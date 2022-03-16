@@ -16,6 +16,7 @@
 package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
 import dk.dtu.compute.mavis.domain.ParseException;
+import dk.dtu.compute.mavis.domain.gridworld.Validator;
 import dk.dtu.compute.mavis.server.Server;
 
 import java.awt.Color;
@@ -37,7 +38,7 @@ class LevelReader {
   private final boolean isLogFile;
   private LevelInfo levelInfo;
   private StateSequence stateSequence;
-  private Validator validator;
+  private Validator<Action, State> validator;
 
   LevelReader(Path domainFile, boolean isLogFile) {
     this.domainFile = domainFile;

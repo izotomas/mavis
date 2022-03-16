@@ -20,6 +20,7 @@ import dk.dtu.compute.mavis.client.Client;
 import dk.dtu.compute.mavis.client.Timeout;
 import dk.dtu.compute.mavis.domain.Domain;
 import dk.dtu.compute.mavis.domain.ParseException;
+import dk.dtu.compute.mavis.domain.gridworld.Validator;
 import dk.dtu.compute.mavis.server.Server;
 
 import java.awt.BasicStroke;
@@ -121,7 +122,7 @@ public final class HospitalDomain implements Domain {
   // for that to be efficiently computable.
   private BitSet[] stateSolvedBoxGoals = new BitSet[1024];
 
-  private Validator validator;
+  private Validator<Action, State> validator;
 
   public HospitalDomain(Path domainFile, boolean isLogFile) throws IOException, ParseException {
     this.levelFile = domainFile;
