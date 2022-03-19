@@ -17,7 +17,7 @@ package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import dk.dtu.compute.cdl.services.ConstraintReader;
+import dk.dtu.compute.cld.services.ConstraintReader;
 import dk.dtu.compute.mavis.domain.ParseException;
 
 /**

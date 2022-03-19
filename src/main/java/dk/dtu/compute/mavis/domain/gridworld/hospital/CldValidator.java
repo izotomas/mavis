@@ -18,8 +18,8 @@ package dk.dtu.compute.mavis.domain.gridworld.hospital;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.javatuples.Pair;
-import dk.dtu.compute.cdl.model.Constraint;
-import dk.dtu.compute.cdl.services.ConstraintBuilder;
+import dk.dtu.compute.cld.model.Constraint;
+import dk.dtu.compute.cld.services.ConstraintBuilder;
 import dk.dtu.compute.mavis.domain.gridworld.Validator;
 
 class CldValidator implements Validator<Action, State> {
@@ -70,14 +70,14 @@ class CldValidator implements Validator<Action, State> {
     return applicable;
   }
 
-  private boolean isApplicable(dk.dtu.compute.cdl.model.Action action) {
+  private boolean isApplicable(dk.dtu.compute.cld.model.Action action) {
     var blocked = singleConstraints.stream().map(b -> b.withRequestingContext(action))
         .map(ConstraintBuilder::build).anyMatch(Constraint::evaluate);
     return !blocked;
   }
 
-  private boolean isConflicting(dk.dtu.compute.cdl.model.Action action,
-      dk.dtu.compute.cdl.model.Action other) {
+  private boolean isConflicting(dk.dtu.compute.cld.model.Action action,
+      dk.dtu.compute.cld.model.Action other) {
     var conflicting = multiConstraints.stream().map(b -> b.withRequestingContext(action))
         .map(b -> b.withRestrictingContext(other)).map(ConstraintBuilder::build)
         .anyMatch(Constraint::evaluate);
@@ -116,8 +116,8 @@ class CldValidator implements Validator<Action, State> {
   }
 
 
-  private static dk.dtu.compute.cdl.model.Action[] map(Action[] jointAction, State state) {
-    var jointCldAction = new dk.dtu.compute.cdl.model.Action[jointAction.length];
+  private static dk.dtu.compute.cld.model.Action[] map(Action[] jointAction, State state) {
+    var jointCldAction = new dk.dtu.compute.cld.model.Action[jointAction.length];
 
     for (var agent = 0; agent < jointAction.length; agent++) {
       var action = jointAction[agent];
@@ -143,8 +143,8 @@ class CldValidator implements Validator<Action, State> {
     return jointCldAction;
   }
 
-  private static dk.dtu.compute.cdl.model.Action map(Pair<Integer, Integer> origin,
+  private static dk.dtu.compute.cld.model.Action map(Pair<Integer, Integer> origin,
       Pair<Integer, Integer> dest, Integer time, String name, Integer agent) {
-    return new dk.dtu.compute.cdl.model.Action(origin, dest, time, name, agent);
+    return new dk.dtu.compute.cld.model.Action(origin, dest, time, name, agent);
   }
 }
