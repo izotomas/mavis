@@ -61,6 +61,7 @@ public class ArgumentParser {
   private Path levelPath = null;
   private int timeoutSeconds = 0;
   private Path logFilePath = null;
+  private Path constraintsPath = null;
 
   /**
    * Replay options.
@@ -254,6 +255,18 @@ public class ArgumentParser {
           this.replayFilePaths = replayFilePaths.toArray(new Path[0]);
           break;
 
+        case "-v":
+          ++i;
+          if (i >= args.length) {
+            throw new ArgumentException("Expected another argument after -v.");
+          }
+          this.constraintsPath = Path.of(args[i]);
+          if (!Files.exists(this.constraintsPath) || !Files.isReadable(this.constraintsPath)) {
+            throw new ArgumentException(
+                "The constraint path may not exist, or has insufficient access.");
+          }
+          break;
+
         // Unknown argument.
         default:
           throw new ArgumentException("Unknown argument: \"" + args[i] + "\".");
@@ -305,6 +318,10 @@ public class ArgumentParser {
 
   public Path getLevelPath() {
     return this.levelPath;
+  }
+
+  public Path getConstraintfilePath() {
+    return this.constraintsPath;
   }
 
   public int getTimeoutSeconds() {
