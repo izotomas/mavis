@@ -120,7 +120,7 @@ class CldValidator implements Validator<Action, State> {
     var jointCldAction = new dk.dtu.compute.cdl.model.Action[jointAction.length];
 
     for (var agent = 0; agent < jointAction.length; agent++) {
-      var action = jointAction[0];
+      var action = jointAction[agent];
       var origRow = Integer.valueOf(state.agentRows[agent]);
       var origCol = Integer.valueOf(state.agentCols[agent]);
       var origin = new Pair<>(origRow, origCol);
