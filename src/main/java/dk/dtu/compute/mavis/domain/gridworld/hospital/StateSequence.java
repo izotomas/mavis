@@ -199,6 +199,7 @@ class StateSequence {
   State apply(Action[] jointAction, boolean[] applicable, long actionTime) {
     State currentState = this.states[this.numStates - 1];
     State newState = new State(currentState);
+    newState.time++;
 
     for (byte agent = 0; agent < jointAction.length; ++agent) {
       if (!applicable[agent]) {

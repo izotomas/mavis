@@ -34,11 +34,14 @@ class State {
   short[] agentRows;
   short[] agentCols;
 
+  int time;
+
   State(short[] boxRows, short[] boxCols, short[] agentRows, short[] agentCols) {
     this.boxRows = boxRows;
     this.boxCols = boxCols;
     this.agentRows = agentRows;
     this.agentCols = agentCols;
+    this.time = 0;
   }
 
   State(State copy) {
@@ -46,5 +49,6 @@ class State {
     this.boxCols = Arrays.copyOf(copy.boxCols, copy.boxCols.length);
     this.agentRows = Arrays.copyOf(copy.agentRows, copy.agentRows.length);
     this.agentCols = Arrays.copyOf(copy.agentCols, copy.agentCols.length);
+    this.time = copy.time;
   }
 }

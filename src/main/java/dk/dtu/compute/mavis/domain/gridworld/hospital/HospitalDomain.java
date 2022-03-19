@@ -20,6 +20,7 @@ import dk.dtu.compute.mavis.client.Client;
 import dk.dtu.compute.mavis.client.Timeout;
 import dk.dtu.compute.mavis.domain.Domain;
 import dk.dtu.compute.mavis.domain.ParseException;
+import dk.dtu.compute.mavis.domain.gridworld.Validator;
 import dk.dtu.compute.mavis.server.Server;
 
 import java.awt.BasicStroke;
@@ -50,7 +51,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public final class HospitalDomain implements Domain {
+public class HospitalDomain implements Domain {
   private Path levelFile;
   private StateSequence stateSequence;
 
@@ -121,13 +122,26 @@ public final class HospitalDomain implements Domain {
   // for that to be efficiently computable.
   private BitSet[] stateSolvedBoxGoals = new BitSet[1024];
 
-  private Validator validator;
+  private Validator<Action, State> validator;
 
   public HospitalDomain(Path domainFile, boolean isLogFile) throws IOException, ParseException {
     this.levelFile = domainFile;
     var levelInfo = new LevelReader(domainFile, isLogFile).getLevel();
     this.stateSequence = new StateSequence(levelInfo);
     this.validator = new HospitalValidator(levelInfo);
+
+    if (isLogFile) {
+      this.clientName = this.stateSequence.levelInfo.clientName;
+      this.numActions = this.stateSequence.getNumStates() - 1;
+    }
+  }
+
+  public HospitalDomain(Path domainFile, boolean isLogFile, Validator<Action, State> validator)
+      throws IOException, ParseException {
+    this.levelFile = domainFile;
+    var levelInfo = new LevelReader(domainFile, isLogFile).getLevel();
+    this.stateSequence = new StateSequence(levelInfo);
+    this.validator = validator;
 
     if (isLogFile) {
       this.clientName = this.stateSequence.levelInfo.clientName;

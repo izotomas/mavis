@@ -13,29 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package dk.dtu.compute.cdl.model;
+package dk.dtu.compute.cdl.errors;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-
-
-public class MultiContext implements ValidationContext {
-
-  private final HashMap<String, Object> map;
-
-  @SafeVarargs
-  public MultiContext(AbstractMap.SimpleEntry<String, Object>... entries) {
-    this.map = new HashMap<>();
-
-    for (AbstractMap.SimpleEntry<String, Object> entry : entries) {
-      map.put(entry.getKey(), entry.getValue());
-    }
-  }
-
-  public Object get(String key) {
-    if (this.map.containsKey(key)) {
-      return this.map.get(key);
-    }
-    throw new IllegalArgumentException();
+public class PredicateExecutionFailedException extends RuntimeException {
+  public PredicateExecutionFailedException(String message) {
+    super(message);
   }
 }

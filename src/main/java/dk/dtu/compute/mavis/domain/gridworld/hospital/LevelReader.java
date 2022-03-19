@@ -16,6 +16,7 @@
 package dk.dtu.compute.mavis.domain.gridworld.hospital;
 
 import dk.dtu.compute.mavis.domain.ParseException;
+import dk.dtu.compute.mavis.domain.gridworld.Validator;
 import dk.dtu.compute.mavis.server.Server;
 
 import java.awt.Color;
@@ -37,7 +38,7 @@ class LevelReader {
   private final boolean isLogFile;
   private LevelInfo levelInfo;
   private StateSequence stateSequence;
-  private Validator validator;
+  private Validator<Action, State> validator;
 
   LevelReader(Path domainFile, boolean isLogFile) {
     this.domainFile = domainFile;
@@ -91,7 +92,6 @@ class LevelReader {
           throw new ParseException("Expected end section (#end).", levelReader.getLineNumber());
         }
         line = parseEndSection(levelReader);
-        this.validator = new HospitalValidator(levelInfo);
 
         // If this is a log file, then parse additional sections.
         if (isLogFile) {
@@ -110,6 +110,8 @@ class LevelReader {
             throw new ParseException("Expected actions section (#actions).",
                 levelReader.getLineNumber());
           }
+          // FIXME: use domain-relevant validator
+          this.validator = new HospitalValidator(levelInfo);
           line = parseActionsSection(levelReader);
 
           if (!line.stripTrailing().equalsIgnoreCase("#end")) {
