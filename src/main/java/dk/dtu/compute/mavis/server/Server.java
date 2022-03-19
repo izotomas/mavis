@@ -100,7 +100,7 @@ public class Server {
     Domain domain;
     try {
       Server.printDebug("Loading domain.");
-      domain = Domain.loadLevel(args.getLevelPath());
+      domain = Domain.loadLevel(args.getLevelPath(), args.getConstraintsPath());
     } catch (ParseException e) {
       Server.printError("Could not load domain, failed to parse level file.");
       Server.printError(e.getMessage());
@@ -221,7 +221,7 @@ public class Server {
         Domain domain;
         try {
           Server.printDebug("Loading domain.");
-          domain = Domain.loadLevel(levelPath);
+          domain = Domain.loadLevel(levelPath, args.getConstraintsPath());
         } catch (ParseException e) {
           Server.printError("Could not load domain, failed to parse level file.");
           Server.printError(e.getMessage());
@@ -319,7 +319,7 @@ public class Server {
     for (int i = 0; i < replayFilePaths.length; i++) {
       try {
         Server.printInfo(String.format("Loading log file: %s", replayFilePaths[i]));
-        domains[i] = Domain.loadReplay(replayFilePaths[i]);
+        domains[i] = Domain.loadReplay(replayFilePaths[i], args.getConstraintsPath());
       } catch (ParseException e) {
         Server.printError("Could not load domain, failed to parse log file.");
         Server.printError(e.getMessage());

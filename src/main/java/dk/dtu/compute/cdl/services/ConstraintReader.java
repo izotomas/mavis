@@ -16,26 +16,36 @@
 package dk.dtu.compute.cdl.services;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import dk.dtu.compute.cdl.errors.StatementParsingException;
 import dk.dtu.compute.mavis.domain.ParseException;
 
 public class ConstraintReader {
-  private static final String hospitalConstraintsResourcePath = "/hospital.cld";
-  private static final ConstraintParser parser = new ConstraintParser();
+  private static final ConstraintParser PARSER = new ConstraintParser();
+  private static final URL DEFAULT_CONSTRAINTS =
+      ConstraintParser.class.getResource("/hospital.cld");
 
-  public static List<ConstraintBuilder> read() throws IOException, ParseException {
-    var url = ConstraintParser.class.getResource(hospitalConstraintsResourcePath);
-    var in = new BufferedReader(new InputStreamReader(url.openStream()));
+  private final InputStream constraintFileStream;
 
+  public ConstraintReader(Path constraintFile) throws IOException {
+    this.constraintFileStream = constraintFile == null ? DEFAULT_CONSTRAINTS.openStream()
+        : new FileInputStream(constraintFile.toFile());
+  }
+
+  public List<ConstraintBuilder> read() throws ParseException, IOException {
     var constraints = new ArrayList<ConstraintBuilder>();
+    var in = new BufferedReader(new InputStreamReader(constraintFileStream));
     String inputLine;
     while ((inputLine = in.readLine()) != null) {
       try {
-        var constraint = parser.Parse(inputLine);
+        var constraint = PARSER.Parse(inputLine);
         constraints.add(constraint);
       } catch (StatementParsingException e) {
         throw new ParseException(e.getMessage());
@@ -43,5 +53,4 @@ public class ConstraintReader {
     }
     return constraints;
   }
-
 }

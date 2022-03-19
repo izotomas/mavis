@@ -320,7 +320,7 @@ public class ArgumentParser {
     return this.levelPath;
   }
 
-  public Path getConstraintfilePath() {
+  public Path getConstraintsPath() {
     return this.constraintsPath;
   }
 

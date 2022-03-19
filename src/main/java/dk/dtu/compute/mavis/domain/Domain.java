@@ -43,7 +43,7 @@ public interface Domain {
    * Make sure the getSupportedDomains() function returns the corresponding domain
    * types that this function supports.
    */
-  static Domain loadLevel(Path levelFile) throws IOException, ParseException {
+  static Domain loadLevel(Path levelFile, Path constraintsFile) throws IOException, ParseException {
     String domainType = Domain.getDomainType(levelFile);
     Domain domain;
     // noinspection SwitchStatementWithTooFewBranches
@@ -52,7 +52,7 @@ public interface Domain {
         domain = new HospitalDomain(levelFile, false);
         break;
       case "hospital-cld":
-        domain = new CldHospitalDomain(levelFile, false);
+        domain = new CldHospitalDomain(levelFile, constraintsFile, false);
         break;
       default:
         throw new ParseException(String.format("Unsupported domain type: %s.", domainType));
@@ -60,7 +60,8 @@ public interface Domain {
     return domain;
   }
 
-  static Domain loadReplay(Path replayFile) throws IOException, ParseException {
+  static Domain loadReplay(Path replayFile, Path constraintsFile)
+      throws IOException, ParseException {
     String domainType = Domain.getDomainType(replayFile);
     Domain domain;
     // noinspection SwitchStatementWithTooFewBranches
@@ -69,7 +70,7 @@ public interface Domain {
         domain = new HospitalDomain(replayFile, true);
         break;
       case "hospital-cld":
-        domain = new CldHospitalDomain(replayFile, true);
+        domain = new CldHospitalDomain(replayFile, constraintsFile, true);
         break;
       default:
         throw new ParseException(String.format("Unsupported domain type: %s.", domainType));

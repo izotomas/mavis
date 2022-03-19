@@ -92,7 +92,6 @@ class LevelReader {
           throw new ParseException("Expected end section (#end).", levelReader.getLineNumber());
         }
         line = parseEndSection(levelReader);
-        this.validator = new HospitalValidator(levelInfo);
 
         // If this is a log file, then parse additional sections.
         if (isLogFile) {
@@ -111,6 +110,8 @@ class LevelReader {
             throw new ParseException("Expected actions section (#actions).",
                 levelReader.getLineNumber());
           }
+          // FIXME: use domain-relevant validator
+          this.validator = new HospitalValidator(levelInfo);
           line = parseActionsSection(levelReader);
 
           if (!line.stripTrailing().equalsIgnoreCase("#end")) {

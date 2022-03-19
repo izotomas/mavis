@@ -21,11 +21,16 @@ import dk.dtu.compute.cdl.services.ConstraintReader;
 import dk.dtu.compute.mavis.domain.ParseException;
 
 /**
- * Limited Hospital domain (no boxes), using cld validation (hardcoded cld file)
+ * Uses CLD Validation
+ * 
+ * <p>
+ * 
+ * Limited Hospital domain (no boxes), only Move/NoOp actions are supported
  */
 public class CldHospitalDomain extends HospitalDomain {
-  public CldHospitalDomain(Path domainFile, boolean isLogFile) throws IOException, ParseException {
+  public CldHospitalDomain(Path domainFile, Path constraintsFile, boolean isLogFile)
+      throws IOException, ParseException {
     super(domainFile, isLogFile, new CldValidator(new LevelReader(domainFile, isLogFile).getLevel(),
-        ConstraintReader.read()));
+        new ConstraintReader(constraintsFile).read()));
   }
 }
