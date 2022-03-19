@@ -255,10 +255,10 @@ public class ArgumentParser {
           this.replayFilePaths = replayFilePaths.toArray(new Path[0]);
           break;
 
-        case "-v":
+        case "-C":
           ++i;
           if (i >= args.length) {
-            throw new ArgumentException("Expected another argument after -v.");
+            throw new ArgumentException("Expected another argument after -C.");
           }
           this.constraintsPath = Path.of(args[i]);
           if (!Files.exists(this.constraintsPath) || !Files.isReadable(this.constraintsPath)) {
@@ -389,9 +389,9 @@ public class ArgumentParser {
         + "Run a client on a level or a directory of levels, optionally output to GUI and/or log file:\n"
         + "    java -jar %1$s -c <client-cmd> -l <level-file-or-dir-path> [-t <seconds>]\n"
         + "              %2$s [-g [<screen>] [-s <ms-per-action>] [-p] [-f] [-i]]\n"
-        + "              %2$s [-o <log-file-path>]\n" + "\n"
+        + "              %2$s [-o <log-file-path>] [-C <constriants-file>]\n" + "\n"
         + "Replay one or more log files, optionally output to synchronized GUIs:\n"
-        + "    java -jar %1$s -r <log-file-path> [<log-file-path> ...]\n"
+        + "    java -jar %1$s -r <log-file-path> [<log-file-path> ...] [-C <constraints-file>]\n"
         + "              %2$s [-g [<screen> ...] [-s <ms-per-action>] [-p] [-f] [-i]]";
     var jarName = getJarName();
     var jarNameSpacePadding = " ".repeat(jarName.length());
@@ -436,7 +436,10 @@ public class ArgumentParser {
         + "        If the -l argument is a level directory path, then logs for the client run on all levels in the\n"
         + "        level directory are compressed as a zip file written to the given log file path.\n"
         + "        NB: The log file may *not* already exist (the server does not allow overwriting files).\n"
-        + "\n" + "Replay one or more log files, optionally output to synchronized GUIs:\n"
+        + "    -C  <constraints-file>\n"
+        + "        Optional. Specifies the constraint definition file. The file must be in CLD format.\n"
+        + "        If not defined, default (with vertex and following conflict definitions) is used.\n"
+        + "Replay one or more log files, optionally output to synchronized GUIs:\n"
         + "    java -jar %1$s -r <log-file-path> [<log-file-path> ...]\n"
         + "              %2$s [-g [<screen> ...] [-s <ms-per-action>] [-p] [-f] [-i]]\n"
         + "Where the arguments are as follows:\n" + "    -r <log-file-path> [<log-file-path> ...]\n"
@@ -453,6 +456,9 @@ public class ArgumentParser {
         + "        By default the GUI starts in windowed mode.\n" + "    -i\n"
         + "        Optional. Start the GUI with interface hidden.\n"
         + "        By default the GUI shows interface elements for navigating playback.\n" + "\n"
+        + "    -C  <constraints-file>\n"
+        + "        Optional. Specifies the constraint definition file. The file must be in CLD format.\n"
+        + "        If not defined, default (with vertex and following conflict definitions) is used.\n"
         + "Notes on the <screen> arguments:\n"
         + "    Values for the <screen> arguments are integers in the range 0..(<num-screens> - 1).\n"
         + "    The server attemps to enumerate screens from left-to-right, breaking ties with top-to-bottom.\n"
