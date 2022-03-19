@@ -23,9 +23,9 @@ public class ExpressionTest {
   private final static Operand A_DEST = new Operand("a.dest");
   private final static Operand B_DEST = new Operand("b.dest");
 
-  private final static Operand LITERAL_0 = new Operand("0");
-  private final static Operand LITERAL_1 = new Operand("1");
-  private final static Operand LITERAL_2 = new Operand("2");
+  private final static Operand NUM_0 = new Operand("0");
+  private final static Operand NUM_1 = new Operand("1");
+  private final static Operand NUM_2 = new Operand("2");
   private final static Operand LITERAL_PUSH = new Operand("'Push'");
 
   private final static ActionContext CTX_A_AGENT_0 =
@@ -55,12 +55,12 @@ public class ExpressionTest {
   }
 
   private static Stream<Arguments> provideValidSingleExpressionIsArgs() {
-    return Stream.of(Arguments.of(A_AGENT, IS_NUM, LITERAL_0, CTX_A_AGENT_0, true),
-        Arguments.of(A_AGENT, IS_NUM, LITERAL_1, CTX_A_AGENT_0, false),
+    return Stream.of(Arguments.of(A_AGENT, IS_NUM, NUM_0, CTX_A_AGENT_0, true),
+        Arguments.of(A_AGENT, IS_NUM, NUM_1, CTX_A_AGENT_0, false),
         Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_PUSH, true),
         Arguments.of(A_NAME, IS_STR, LITERAL_PUSH, CTX_A_NOOP, false),
-        Arguments.of(A_TIME, IS_NUM, LITERAL_1, CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_NUM, LITERAL_0, CTX_A_TIME_1, false),
+        Arguments.of(A_TIME, IS_NUM, NUM_1, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_NUM, NUM_0, CTX_A_TIME_1, false),
         Arguments.of(A_DEST, IS_VTX, B_DEST,
             new ActionContext(new SimpleEntry<>("a", CTX_A_DEST_1_1),
                 new SimpleEntry<>("b", CTX_A_DEST_1_1)),
@@ -87,10 +87,10 @@ public class ExpressionTest {
 
 
   private static Stream<Arguments> provideValidSingleExpressionLessMoreArgs() {
-    return Stream.of(Arguments.of(A_TIME, IS_LESS, LITERAL_1, CTX_A_TIME_1, false),
-        Arguments.of(A_TIME, IS_LESS, LITERAL_2, CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_MORE, LITERAL_0, CTX_A_TIME_1, true),
-        Arguments.of(A_TIME, IS_MORE, LITERAL_1, CTX_A_TIME_1, false),
-        Arguments.of(A_TIME, IS_MORE, LITERAL_2, CTX_A_TIME_1, false));
+    return Stream.of(Arguments.of(A_TIME, IS_LESS, NUM_1, CTX_A_TIME_1, false),
+        Arguments.of(A_TIME, IS_LESS, NUM_2, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_MORE, NUM_0, CTX_A_TIME_1, true),
+        Arguments.of(A_TIME, IS_MORE, NUM_1, CTX_A_TIME_1, false),
+        Arguments.of(A_TIME, IS_MORE, NUM_2, CTX_A_TIME_1, false));
   }
 }
