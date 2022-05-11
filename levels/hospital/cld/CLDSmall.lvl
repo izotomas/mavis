@@ -1,0 +1,26 @@
+#domain
+hospital-cld
+#levelname
+CLDSmall
+#colors
+blue: 0
+red: 1
+green: 2
+lightblue: 3
+#initial
++++++++
++     +
++0+ + +
++1+ + +
++2+ + +
++3+ + +
++++++++
+#goal
++++++++
++     +
++ + +0+
++ + +1+
++ + +2+
++ + +3+
++++++++
+#end
